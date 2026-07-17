@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -16,38 +15,28 @@
       <Pane layoutX="94.0" layoutY="49.0" prefHeight="381.0" prefWidth="466.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 15;">
          <children>
             <Label layoutX="190.0" layoutY="18.0" text="CGTI">
-               <font>
-                  <Font name="System Bold" size="25.0" />
-               </font>
+               <font><Font name="System Bold" size="25.0" /></font>
             </Label>
             <ImageView fitHeight="55.0" fitWidth="55.0" layoutX="248.0" layoutY="15.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../images/Logo.png" />
-               </image>
+               <image><Image url="@../images/Logo.png" /></image>
             </ImageView>
             <Label layoutX="186.0" layoutY="55.0" text="Lista de Usuarios" textFill="#00afff">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
-            <TableView editable="true" layoutX="33.0" layoutY="144.0" prefHeight="177.0" prefWidth="402.0">
-              <columns>
-                <TableColumn prefWidth="56.33332824707031" text="ID" />
-                <TableColumn prefWidth="121.0" text="Nombre" />
-                  <TableColumn prefWidth="93.0" text="Rol" />
-                  <TableColumn prefWidth="130.0" text="Acciones" />
-              </columns>
+               <font><Font name="System Bold" size="12.0" /></font>
+            </Label>
+
+            <TableView fx:id="tablaUsuarios" layoutX="33.0" layoutY="90.0" prefHeight="190.0" prefWidth="400.0">
+               <columns>
+                  <TableColumn fx:id="colId" editable="false" prefWidth="55.0" style="-fx-alignment: CENTER;" text="ID" />
+                  <TableColumn fx:id="colNombre" prefWidth="140.0" text="Nombre" />
+                  <TableColumn fx:id="colUsername" prefWidth="105.0" text="Username" />
+                  <TableColumn fx:id="colRol" editable="false" prefWidth="98.0" style="-fx-alignment: CENTER;" text="Rol" />
+               </columns>
             </TableView>
-            <TextArea layoutX="33.0" layoutY="169.0" prefHeight="37.0" prefWidth="272.0" text="001              Jesus Omar                     Admin" />
-            <Button fx:id="btnEditar" layoutX="310.0" layoutY="173.0" mnemonicParsing="false" onAction="#accionEditarUsuario1" style="-fx-background-color: linear-gradient(to bottom right, #4ba4ff, #26d6ff);" text="Editar" textFill="WHITE" />
-            <TextArea layoutX="33.0" layoutY="205.0" prefHeight="37.0" prefWidth="272.0" text="002              Jesua Rico                      Tecnico" />
-            <TextArea layoutX="33.0" layoutY="242.0" prefHeight="37.0" prefWidth="272.0" text="003              Angel de Jesus               Usuario" />
-            <Button fx:id="btnEditar1" layoutX="310.0" layoutY="249.0" mnemonicParsing="false" onAction="#accionEditarUsuario3" style="-fx-background-color: linear-gradient(to bottom right, #4ba4ff, #26d6ff);" text="Editar" textFill="WHITE" />
-            <Button fx:id="btnEditar2" layoutX="310.0" layoutY="211.0" mnemonicParsing="false" onAction="#accionEditarUsuario2" style="-fx-background-color: linear-gradient(to bottom right, #4ba4ff, #26d6ff);" text="Editar" textFill="WHITE" />
-            <Button fx:id="btnEditar3" layoutX="369.0" layoutY="173.0" mnemonicParsing="false" style="-fx-background-color: ff0000;" text="Eliminar" textFill="WHITE" />
-            <Button fx:id="btnEditar11" layoutX="369.0" layoutY="249.0" mnemonicParsing="false" style="-fx-background-color: ff0000;" text="Eliminar" textFill="WHITE" />
-            <Button fx:id="btnEditar21" layoutX="369.0" layoutY="211.0" mnemonicParsing="false" style="-fx-background-color: ff0000;" text="Eliminar" textFill="WHITE" />
-            <Button fx:id="btnResultado" layoutX="33.0" layoutY="337.0" mnemonicParsing="false" onAction="#accionAgregar" style="-fx-background-color: linear-gradient(to bottom right, #4ba4ff, #26d6ff);" text="+ Agregar" textFill="WHITE" />
-            <Button fx:id="btnVolver" layoutX="319.0" layoutY="337.0" mnemonicParsing="false" onAction="#accionVolver" style="-fx-background-color: linear-gradient(to bottom right, #4ba4ff, #26d6ff);" text="Volver al menu" textFill="WHITE" />
+
+            <Button fx:id="btnResultado" layoutX="33.0" layoutY="298.0" mnemonicParsing="false" onAction="#accionAgregar" style="-fx-background-color: linear-gradient(to bottom right, #4ba4ff, #26d6ff);" text="+ Agregar" textFill="WHITE" />
+            <Button fx:id="btnEditar" layoutX="130.0" layoutY="298.0" mnemonicParsing="false" onAction="#accionEditar" style="-fx-background-color: linear-gradient(to bottom right, #4ba4ff, #26d6ff);" text="Editar" textFill="WHITE" />
+            <Button fx:id="btnEliminar" layoutX="215.0" layoutY="298.0" mnemonicParsing="false" onAction="#accionEliminar" style="-fx-background-color: #C0392B;" text="Eliminar" textFill="WHITE" />
+            <Button fx:id="btnVolver" layoutX="319.0" layoutY="298.0" mnemonicParsing="false" onAction="#accionVolver" style="-fx-background-color: linear-gradient(to bottom right, #4ba4ff, #26d6ff);" text="Volver al menu" textFill="WHITE" />
          </children>
       </Pane>
    </children>

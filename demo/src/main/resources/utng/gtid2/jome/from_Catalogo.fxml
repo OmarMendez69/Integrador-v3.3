@@ -48,14 +48,13 @@
             <TableView fx:id="tablaMateriales" style="-fx-background-color: #FFFFFF; -fx-border-color: #DDE3EA; -fx-border-radius: 6; -fx-background-radius: 6;" VBox.vgrow="ALWAYS">
                 <columns>
                     <TableColumn fx:id="colId" editable="false" prefWidth="70.0" style="-fx-alignment: CENTER;" text="ID" />
-                    <TableColumn fx:id="colNombre" prefWidth="110.0" text="Nombre del material" />
-                    <TableColumn fx:id="colCategoria" prefWidth="100.0" text="Categoría" />
+                    <TableColumn fx:id="colNombre" prefWidth="130.0" text="Nombre del material" />
+                    <TableColumn fx:id="colCategoria" prefWidth="110.0" text="Categoría" />
                     <TableColumn fx:id="colCantidadTotal" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Cantidad total" />
-                    <TableColumn fx:id="colCantidadDisponible" prefWidth="80.0" style="-fx-alignment: CENTER;" text="Disponible" />
-                    <TableColumn fx:id="colUbicacion" prefWidth="85.0" text="Ubicación" />
-                    <TableColumn fx:id="colCostoUnitario" prefWidth="95.0" style="-fx-alignment: CENTER-RIGHT;" text="Costo unitario" />
-                    <TableColumn fx:id="colEstado" editable="false" prefWidth="65.0" style="-fx-alignment: CENTER;" text="Estado" />
-                    <TableColumn fx:id="colAcciones" editable="false" prefWidth="105.0" style="-fx-alignment: CENTER;" text="Acciones" />
+                    <TableColumn fx:id="colCantidadDisponible" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Disponible" />
+                    <TableColumn fx:id="colUbicacion" prefWidth="95.0" text="Ubicación" />
+                    <TableColumn fx:id="colCostoUnitario" prefWidth="100.0" style="-fx-alignment: CENTER-RIGHT;" text="Costo unitario" />
+                    <TableColumn fx:id="colEstado" editable="false" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Estado" />
                 </columns>
                 <placeholder>
                     <Label style="-fx-text-fill: #AAAAAA; -fx-font-size: 13px;" text="No hay materiales registrados." />

@@ -4,19 +4,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import utng.gtid2.dao.MaterialDAO;
 
-/**
- * A pesar del nombre de la clase (BajaInsumo), esta pantalla funciona como
- * "Eliminar Producto": borra por completo un insumo del catálogo cuando
- * el técnico lo agregó por error o con datos equivocados. No lleva motivo,
- * fecha, responsable ni autorización — eso correspondería a la baja oficial
- * institucional, un flujo distinto que se implementaría en otra pantalla.
- */
+import java.io.IOException;
+import java.sql.SQLException;
+
 public class BajaInsumoController {
 
     @FXML private TextField txtCodigo;
@@ -24,18 +22,41 @@ public class BajaInsumoController {
     @FXML private TextField txtCategoria;
     @FXML private Button btnVolver;
 
-    /**
-     * Autocompleta (solo lectura) los datos del insumo seleccionado en el catálogo.
-     */
-    public void cargarProducto(String codigo, String nombre, String categoria) {
-        txtCodigo.setText(codigo);
+    private final MaterialDAO materialDAO = new MaterialDAO();
+    private int idMaterial;
+
+    public void cargarProducto(int idMaterial, String nombre, String categoria) {
+        this.idMaterial = idMaterial;
+        txtCodigo.setText(String.valueOf(idMaterial));
         txtNombre.setText(nombre);
         txtCategoria.setText(categoria);
     }
 
     @FXML
-    private void mostrarInformacion() {
-        // por ahora no hace nada
+    private void eliminarDefinitivamente() {
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION,
+                "¿Seguro que quieres eliminar \"" + txtNombre.getText() + "\"? Esta acción no se puede deshacer.",
+                ButtonType.YES, ButtonType.NO);
+        confirmacion.setHeaderText(null);
+
+        confirmacion.showAndWait().ifPresent(respuesta -> {
+            if (respuesta == ButtonType.YES) {
+                try {
+                    materialDAO.eliminar(idMaterial);
+                    accionVolver();
+                } catch (SQLException e) {
+                    mostrarError("No se pudo eliminar el insumo: " + e.getMessage());
+                } catch (IOException e) {
+                    mostrarError("Se eliminó, pero no se pudo volver al catálogo: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    private void mostrarError(String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.ERROR, mensaje, ButtonType.OK);
+        alerta.setHeaderText(null);
+        alerta.showAndWait();
     }
 
     @FXML
