@@ -54,6 +54,11 @@ public class PrimaryController {
     }
 
     @FXML
+    private void irAProveedores() throws IOException {
+        cambiarPantalla("from_ListaProveedores.fxml", "Proveedores");
+    }
+
+    @FXML
     private void irAReportes() throws IOException {
         cambiarPantalla("from_Reportes.fxml", "Reportes");
     }

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="647.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #b721ff 0%, #21d4fd 100%);;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="utng.gtid2.jome.AgregarProveedorController">
+   <children>
+      <Pane layoutX="94.0" layoutY="49.0" prefHeight="381.0" prefWidth="466.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 15;">
+         <children>
+            <Label layoutX="206.0" layoutY="19.0" text="CGTI">
+               <font>
+                  <Font name="System Bold" size="25.0" />
+               </font>
+            </Label>
+            <Label fx:id="lblTitulo" layoutX="172.0" layoutY="52.0" text="Agregar Proveedor" textFill="#00afff">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="26.0" fitWidth="27.0" layoutX="254.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/Logo.png" />
+               </image>
+            </ImageView>
+
+            <Label layoutX="40.0" layoutY="87.0" text="Nombre del proveedor">
+               <font>
+                  <Font name="System Bold" size="10.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtNombre" layoutX="41.0" layoutY="103.0" prefHeight="23.0" prefWidth="250.0" />
+
+            <Label layoutX="40.0" layoutY="133.0" text="Contacto">
+               <font>
+                  <Font name="System Bold" size="10.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtContacto" layoutX="41.0" layoutY="150.0" prefHeight="23.0" prefWidth="250.0" promptText="Nombre de la persona de contacto" />
+
+            <Label layoutX="40.0" layoutY="180.0" text="Teléfono">
+               <font>
+                  <Font name="System Bold" size="10.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtTelefono" layoutX="41.0" layoutY="197.0" prefHeight="25.0" prefWidth="250.0" />
+
+            <Label layoutX="42.0" layoutY="227.0" text="Correo">
+               <font>
+                  <Font name="System Bold" size="10.0" />
+               </font>
+            </Label>
+            <TextField fx:id="txtCorreo" layoutX="42.0" layoutY="244.0" prefHeight="25.0" prefWidth="250.0" promptText="correo@ejemplo.com" />
+
+            <Label layoutX="320.0" layoutY="87.0" text="Estado">
+               <font>
+                  <Font name="System Bold" size="10.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="cbEstado" layoutX="320.0" layoutY="103.0" prefHeight="23.0" prefWidth="105.0" />
+
+            <Button fx:id="btnGuardar" layoutX="41.0" layoutY="298.0" mnemonicParsing="false" onAction="#guardarProveedor" style="-fx-background-color: linear-gradient(to bottom right, #4ba4ff, #26d6ff);" text="Guardar" textFill="WHITE" />
+            <Button fx:id="btnCancelar" layoutX="122.0" layoutY="298.0" mnemonicParsing="false" onAction="#accionCancelar" style="-fx-background-color: ff0000;" text="Cancelar" textFill="WHITE" />
+            <Button fx:id="btnVolver" layoutX="334.0" layoutY="298.0" mnemonicParsing="false" onAction="#accionVolver" style="-fx-background-color: linear-gradient(to bottom right, #4ba4ff, #26d6ff);" text="Volver al menu" textFill="WHITE" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

@@ -47,6 +47,8 @@
 
                 <Button fx:id="btnUsuarios" maxWidth="1.7976931348623157E308" onAction="#irAUsuarios" prefHeight="38.0" style="-fx-background-color: transparent; -fx-background-radius: 7; -fx-text-fill: #374151; -fx-font-size: 13px; -fx-alignment: CENTER_LEFT; -fx-cursor: hand; -fx-border-width: 0;" text="  Usuarios" />
 
+                <Button fx:id="btnProveedores" maxWidth="1.7976931348623157E308" onAction="#irAProveedores" prefHeight="38.0" style="-fx-background-color: transparent; -fx-background-radius: 7; -fx-text-fill: #374151; -fx-font-size: 13px; -fx-alignment: CENTER_LEFT; -fx-cursor: hand; -fx-border-width: 0;" text="  Proveedores" />
+
                 <Button fx:id="btnPrestamo" maxWidth="1.7976931348623157E308" onAction="#irAPrestamo" prefHeight="38.0" style="-fx-background-color: transparent; -fx-background-radius: 7; -fx-text-fill: #374151; -fx-font-size: 13px; -fx-alignment: CENTER_LEFT; -fx-cursor: hand; -fx-border-width: 0;" text="  Prestamo" />
 
                 <Button fx:id="btnReportes" maxWidth="1.7976931348623157E308" onAction="#irAReportes" prefHeight="38.0" style="-fx-background-color: transparent; -fx-background-radius: 7; -fx-text-fill: #374151; -fx-font-size: 13px; -fx-alignment: CENTER_LEFT; -fx-cursor: hand; -fx-border-width: 0;" text="  Reportes" />

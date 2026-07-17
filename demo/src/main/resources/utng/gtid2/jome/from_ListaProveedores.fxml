@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="647.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #b721ff 0%, #21d4fd 100%);;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="utng.gtid2.jome.ListaProveedoresController">
+   <children>
+      <Pane layoutX="94.0" layoutY="49.0" prefHeight="381.0" prefWidth="466.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 15;">
+         <children>
+            <Label layoutX="190.0" layoutY="18.0" text="CGTI">
+               <font><Font name="System Bold" size="25.0" /></font>
+            </Label>
+            <ImageView fitHeight="55.0" fitWidth="55.0" layoutX="248.0" layoutY="15.0" pickOnBounds="true" preserveRatio="true">
+               <image><Image url="@../images/Logo.png" /></image>
+            </ImageView>
+            <Label layoutX="172.0" layoutY="55.0" text="Lista de Proveedores" textFill="#00afff">
+               <font><Font name="System Bold" size="12.0" /></font>
+            </Label>
+
+            <TableView fx:id="tablaProveedores" layoutX="33.0" layoutY="90.0" prefHeight="190.0" prefWidth="400.0">
+               <columns>
+                  <TableColumn fx:id="colId" editable="false" prefWidth="45.0" style="-fx-alignment: CENTER;" text="ID" />
+                  <TableColumn fx:id="colNombre" prefWidth="130.0" text="Nombre" />
+                  <TableColumn fx:id="colContacto" prefWidth="110.0" text="Contacto" />
+                  <TableColumn fx:id="colTelefono" prefWidth="95.0" text="Teléfono" />
+                  <TableColumn fx:id="colEstado" editable="false" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Estado" />
+               </columns>
+            </TableView>
+
+            <Button fx:id="btnResultado" layoutX="33.0" layoutY="298.0" mnemonicParsing="false" onAction="#accionAgregar" style="-fx-background-color: linear-gradient(to bottom right, #4ba4ff, #26d6ff);" text="+ Agregar" textFill="WHITE" />
+            <Button fx:id="btnEditar" layoutX="130.0" layoutY="298.0" mnemonicParsing="false" onAction="#accionEditar" style="-fx-background-color: linear-gradient(to bottom right, #4ba4ff, #26d6ff);" text="Editar" textFill="WHITE" />
+            <Button fx:id="btnEliminar" layoutX="215.0" layoutY="298.0" mnemonicParsing="false" onAction="#accionEliminar" style="-fx-background-color: #C0392B;" text="Eliminar" textFill="WHITE" />
+            <Button fx:id="btnVolver" layoutX="319.0" layoutY="298.0" mnemonicParsing="false" onAction="#accionVolver" style="-fx-background-color: linear-gradient(to bottom right, #4ba4ff, #26d6ff);" text="Volver al menu" textFill="WHITE" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>
