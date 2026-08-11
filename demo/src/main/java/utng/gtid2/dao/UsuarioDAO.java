@@ -1,5 +1,6 @@
 package utng.gtid2.dao;
 
+import org.mindrot.jbcrypt.BCrypt;
 import utng.gtid2.conexion.ConexionBD;
 import utng.gtid2.modelo.Usuario;
 
@@ -37,18 +38,20 @@ public class UsuarioDAO {
     public void insertar(Usuario usuario) throws SQLException {
         String sql = "INSERT INTO dbo.Usuarios (nombre, username, password, rol) VALUES (?, ?, ?, ?)";
 
+        // Encriptar la contraseña antes de guardar
+        String passwordHasheada = BCrypt.hashpw(usuario.getPassword(), BCrypt.gensalt());
+
         try (Connection conexion = ConexionBD.conectar();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
 
             ps.setString(1, usuario.getNombre());
             ps.setString(2, usuario.getUsername());
-            ps.setString(3, usuario.getPassword());
+            ps.setString(3, passwordHasheada);
             ps.setString(4, usuario.getRol());
             ps.executeUpdate();
         }
     }
 
-    // Solo nombre y rol: username y password no se tocan al editar
     public void actualizarNombreRol(int idUsuario, String nombre, String rol) throws SQLException {
         String sql = "UPDATE dbo.Usuarios SET nombre = ?, rol = ? WHERE idUsuario = ?";
 
@@ -71,5 +74,36 @@ public class UsuarioDAO {
             ps.setInt(1, idUsuario);
             ps.executeUpdate();
         }
+    }
+
+    /**
+     * Busca el usuario por username y verifica la contraseña con BCrypt.
+     * Retorna el Usuario si las credenciales son correctas, null si no.
+     */
+    public Usuario verificarCredenciales(String username, String password) throws SQLException {
+        String sql = "SELECT idUsuario, nombre, username, password, rol FROM dbo.Usuarios WHERE username = ?";
+
+        try (Connection conexion = ConexionBD.conectar();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setString(1, username);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String hashGuardado = rs.getString("password");
+
+                    if (BCrypt.checkpw(password, hashGuardado)) {
+                        return new Usuario(
+                                rs.getInt("idUsuario"),
+                                rs.getString("nombre"),
+                                rs.getString("username"),
+                                "",
+                                rs.getString("rol")
+                        );
+                    }
+                }
+            }
+        }
+        return null;
     }
 }
