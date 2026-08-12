@@ -9,8 +9,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import utng.gtid2.dao.UsuarioDAO;
+import utng.gtid2.modelo.Usuario;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class RegistroUsuarioController {
 
@@ -34,10 +37,51 @@ public class RegistroUsuarioController {
 
     @FXML
     private void mostrarInformacion() {
-        String nombre = txtNombre.getText();
-        String username = txtUsername.getText();
+        String nombre = txtNombre.getText().trim();
+        String username = txtUsername.getText().trim();
+        String password = txtPassword.getText().trim();
 
-        lblRegistro.setText("Usuario " + username + " (" + nombre + ") registrado.");
+        // Validación de campos vacíos
+        if (nombre.isEmpty() || username.isEmpty() || password.isEmpty()) {
+            lblRegistro.setText("Por favor completa todos los campos.");
+            lblRegistro.setStyle("-fx-text-fill: #ff4444;");
+            return;
+        }
+
+        // Validación de longitud mínima de contraseña
+        if (password.length() < 4) {
+            lblRegistro.setText("La contraseña debe tener al menos 4 caracteres.");
+            lblRegistro.setStyle("-fx-text-fill: #ff4444;");
+            return;
+        }
+
+        try {
+            UsuarioDAO dao = new UsuarioDAO();
+
+            // Validar que el username no exista ya
+            if (dao.existeUsername(username)) {
+                lblRegistro.setText("El nombre de usuario ya está en uso.");
+                lblRegistro.setStyle("-fx-text-fill: #ff4444;");
+                return;
+            }
+
+            // Rol por defecto: Usuario
+            Usuario nuevo = new Usuario(0, nombre, username, password, "Usuario");
+            dao.insertar(nuevo);
+
+            lblRegistro.setText("¡Usuario registrado correctamente!");
+            lblRegistro.setStyle("-fx-text-fill: #2E7D32;");
+
+            // Limpiar campos
+            txtNombre.clear();
+            txtUsername.clear();
+            txtPassword.clear();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            lblRegistro.setText("Error de conexión con la base de datos.");
+            lblRegistro.setStyle("-fx-text-fill: #ff4444;");
+        }
     }
 
     @FXML
@@ -47,14 +91,14 @@ public class RegistroUsuarioController {
             Parent root = loader.load();
 
             Stage stage = (Stage) btnLogin.getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
+            stage.setScene(new Scene(root));
             stage.setTitle("Login");
             stage.show();
 
         } catch (IOException e) {
             e.printStackTrace();
-            lblRegistro.setText("Error al volver al login");
+            lblRegistro.setText("Error al volver al login.");
+            lblRegistro.setStyle("-fx-text-fill: #ff4444;");
         }
     }
 }

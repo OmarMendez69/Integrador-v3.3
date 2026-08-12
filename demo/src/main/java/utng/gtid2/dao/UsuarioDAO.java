@@ -38,7 +38,6 @@ public class UsuarioDAO {
     public void insertar(Usuario usuario) throws SQLException {
         String sql = "INSERT INTO dbo.Usuarios (nombre, username, password, rol) VALUES (?, ?, ?, ?)";
 
-        // Encriptar la contraseña antes de guardar
         String passwordHasheada = BCrypt.hashpw(usuario.getPassword(), BCrypt.gensalt());
 
         try (Connection conexion = ConexionBD.conectar();
@@ -76,10 +75,23 @@ public class UsuarioDAO {
         }
     }
 
-    /**
-     * Busca el usuario por username y verifica la contraseña con BCrypt.
-     * Retorna el Usuario si las credenciales son correctas, null si no.
-     */
+    public boolean existeUsername(String username) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM dbo.Usuarios WHERE username = ?";
+
+        try (Connection conexion = ConexionBD.conectar();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setString(1, username);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
     public Usuario verificarCredenciales(String username, String password) throws SQLException {
         String sql = "SELECT idUsuario, nombre, username, password, rol FROM dbo.Usuarios WHERE username = ?";
 
