@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
@@ -31,6 +32,11 @@ public class PrimaryController {
     @FXML private VBox vboxActividad;
     @FXML private ScrollPane scrollCriticos;
     @FXML private ScrollPane scrollActividad;
+    @FXML private Button btnAsignaciones;
+    @FXML private Button btnDesecho;
+    @FXML private Button btnUsuarios;
+    @FXML private Button btnProveedores;
+    @FXML private Button btnReportes;
 
     @FXML
     public void initialize() {
@@ -38,6 +44,7 @@ public class PrimaryController {
             lblId.setText("Bienvenido, " + Sesion.getNombre());
             lblRolUsuario.setText(Sesion.getRol());
         }
+        aplicarRestriccionesPorRol();
         cargarDashboard();
     }
 
@@ -45,6 +52,29 @@ public class PrimaryController {
         lblId.setText("Bienvenido, " + nombreUsuario);
         if (Sesion.estaActiva()) {
             lblRolUsuario.setText(Sesion.getRol());
+        }
+    }
+
+    private void aplicarRestriccionesPorRol() {
+        if (Sesion.isUsuario()) {
+            btnAsignaciones.setVisible(false);
+            btnAsignaciones.setManaged(false);
+            btnDesecho.setVisible(false);
+            btnDesecho.setManaged(false);
+            btnUsuarios.setVisible(false);
+            btnUsuarios.setManaged(false);
+            btnProveedores.setVisible(false);
+            btnProveedores.setManaged(false);
+            btnReportes.setVisible(false);
+            btnReportes.setManaged(false);
+
+        } else if (Sesion.isTecnico()) {
+            btnUsuarios.setVisible(false);
+            btnUsuarios.setManaged(false);
+            btnProveedores.setVisible(false);
+            btnProveedores.setManaged(false);
+            btnReportes.setVisible(false);
+            btnReportes.setManaged(false);
         }
     }
 
@@ -62,7 +92,6 @@ public class PrimaryController {
             lblTecnicosActivos.setText(String.valueOf(tecnicos));
             lblDesechoMes.setText(String.format("%.1f kg", peso));
 
-            // ALERTA DE DESABASTO
             if (criticos > 0) {
                 lblAlertaTexto.setText("Alerta de desabasto: " + criticos + " insumo(s) en nivel critico");
                 hboxAlerta.setVisible(true);
@@ -90,7 +119,6 @@ public class PrimaryController {
                 hboxAlerta.setManaged(false);
             }
 
-            // ACTIVIDAD RECIENTE
             vboxActividad.getChildren().clear();
             List<String[]> actividad = dao.listarActividadReciente();
 
@@ -170,7 +198,7 @@ public class PrimaryController {
 
     @FXML
     private void irAPrestamo() throws IOException {
-        cambiarPantalla("from_Prestamo.fxml", "Prestamo");
+        cambiarPantalla("from_ListaAsignaciones.fxml", "Prestamo");
     }
 
     @FXML

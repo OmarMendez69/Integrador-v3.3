@@ -40,13 +40,12 @@ public class CatalogoController {
     @FXML private Label lblStockBajo;
     @FXML private Label lblUltimaActualizacion;
     @FXML private Button btnVolver;
+    @FXML private Button btnAgregarMaterial;
+    @FXML private Button btnActualizar;
+    @FXML private Button btnEliminarMaterial;
 
     private final MaterialDAO materialDAO = new MaterialDAO();
     private final ObservableList<Material> listaCompleta = FXCollections.observableArrayList();
-
-    public void setUsuario(String nombreUsuario) {
-        lblUsuario.setText("👤 " + nombreUsuario);
-    }
 
     @FXML
     public void initialize() {
@@ -73,7 +72,30 @@ public class CatalogoController {
         cmbFiltroCategoria.valueProperty().addListener((obs, viejo, nuevo) -> aplicarFiltros());
         cmbFiltroEstado.valueProperty().addListener((obs, viejo, nuevo) -> aplicarFiltros());
 
+        // Aplicar restricciones según rol
+        aplicarRestriccionesPorRol();
+
+        // Mostrar usuario en sesión
+        if (Sesion.estaActiva()) {
+            lblUsuario.setText("👤 " + Sesion.getNombre() + " (" + Sesion.getRol() + ")");
+        }
+
         cargarDatos();
+    }
+
+    private void aplicarRestriccionesPorRol() {
+        if (Sesion.isUsuario()) {
+            btnAgregarMaterial.setVisible(false);
+            btnAgregarMaterial.setManaged(false);
+            btnActualizar.setVisible(false);
+            btnActualizar.setManaged(false);
+            btnEliminarMaterial.setVisible(false);
+            btnEliminarMaterial.setManaged(false);
+        }
+    }
+
+    public void setUsuario(String nombreUsuario) {
+        lblUsuario.setText("👤 " + nombreUsuario);
     }
 
     private void cargarDatos() {

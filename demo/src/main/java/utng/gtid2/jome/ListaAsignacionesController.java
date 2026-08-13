@@ -52,10 +52,19 @@ public class ListaAsignacionesController {
         colObservaciones.setCellValueFactory(new PropertyValueFactory<>("observaciones"));
 
         configurarColumnaAccion();
+        aplicarRestriccionesPorRol();
 
         txtBuscar.textProperty().addListener((obs, viejo, nuevo) -> aplicarFiltro());
 
         cargarDatos();
+    }
+
+    private void aplicarRestriccionesPorRol() {
+        if (Sesion.isUsuario()) {
+            btnRegistrarPrestamo.setVisible(false);
+            btnRegistrarPrestamo.setManaged(false);
+            colAccion.setVisible(false);
+        }
     }
 
     private void configurarColumnaAccion() {
@@ -80,8 +89,10 @@ public class ListaAsignacionesController {
                     setGraphic(null);
                     return;
                 }
+
                 Prestamo prestamo = getTableView().getItems().get(getIndex());
                 contenedor.getChildren().clear();
+
                 if (!prestamo.isDevuelto()) {
                     contenedor.getChildren().add(btnDevolver);
                 }
