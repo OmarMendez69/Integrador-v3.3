@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -66,10 +67,10 @@
             <HBox alignment="CENTER_LEFT">
                 <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                     <Label fx:id="lblTitulo" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="Panel principal" />
-                    <Label fx:id="lblId" style="-fx-font-size: 12px; -fx-text-fill: #6B7280;" text="Bienvenido, jefe de area" />
+                    <Label fx:id="lblId" style="-fx-font-size: 12px; -fx-text-fill: #6B7280;" text="Bienvenido," />
                 </VBox>
                 <HBox alignment="CENTER" spacing="8.0">
-                    <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1F2937;" text="Superusuario" />
+                    <Label fx:id="lblRolUsuario" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1F2937;" text="" />
                 </HBox>
             </HBox>
 
@@ -86,26 +87,26 @@
 
                 <VBox spacing="5.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-padding: 16 16 16 16;" GridPane.columnIndex="0">
                     <Label style="-fx-font-size: 11px; -fx-text-fill: #6B7280;" text="Insumos registrados" />
-                    <Label fx:id="lblInsumosRegistrados" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="86" />
+                    <Label fx:id="lblInsumosRegistrados" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="--" />
                 </VBox>
 
                 <VBox spacing="5.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-padding: 16 16 16 16;" GridPane.columnIndex="1">
                     <Label style="-fx-font-size: 11px; -fx-text-fill: #6B7280;" text="Insumos criticos" />
-                    <Label fx:id="lblInsumosCriticos" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #EF4444;" text="7" />
+                    <Label fx:id="lblInsumosCriticos" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #EF4444;" text="--" />
                 </VBox>
 
                 <VBox spacing="5.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-padding: 16 16 16 16;" GridPane.columnIndex="2">
                     <Label style="-fx-font-size: 11px; -fx-text-fill: #6B7280;" text="Tecnicos activos" />
-                    <Label fx:id="lblTecnicosActivos" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="5" />
+                    <Label fx:id="lblTecnicosActivos" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="--" />
                 </VBox>
 
                 <VBox spacing="5.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-padding: 16 16 16 16;" GridPane.columnIndex="3">
                     <Label style="-fx-font-size: 11px; -fx-text-fill: #6B7280;" text="Desecho del mes" />
-                    <Label fx:id="lblDesechoMes" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="12.4 kg" />
+                    <Label fx:id="lblDesechoMes" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="--" />
                 </VBox>
             </GridPane>
 
-            <HBox alignment="CENTER_LEFT" spacing="24.0" style="-fx-background-color: #FEF2F2; -fx-background-radius: 10; -fx-border-color: #FECACA; -fx-border-width: 1; -fx-border-radius: 10; -fx-padding: 18 20 18 20;">
+            <HBox fx:id="hboxAlerta" alignment="CENTER_LEFT" spacing="24.0" style="-fx-background-color: #FEF2F2; -fx-background-radius: 10; -fx-border-color: #FECACA; -fx-border-width: 1; -fx-border-radius: 10; -fx-padding: 18 20 18 20;" managed="false" visible="false">
                 <HBox alignment="CENTER_LEFT" spacing="10.0" HBox.hgrow="ALWAYS">
                     <VBox alignment="CENTER" prefHeight="62.0" prefWidth="90.0" style="-fx-background-color: #FEF3C7; -fx-background-radius: 5; -fx-border-color: #F59E0B; -fx-border-width: 1; -fx-border-radius: 5;">
                         <children>
@@ -116,38 +117,28 @@
                             </ImageView>
                         </children>
                     </VBox>
-                    <Label maxWidth="220.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #991B1B;" text="Alerta de desabasto: 7 insumos en nivel critico" wrapText="true" />
+                    <Label fx:id="lblAlertaTexto" maxWidth="220.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #991B1B;" text="" wrapText="true" />
                 </HBox>
 
-                <VBox minWidth="270.0" spacing="0.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 7; -fx-border-color: #E5E7EB; -fx-border-width: 1; -fx-border-radius: 7;">
-                    <HBox style="-fx-padding: 8 12 8 12; -fx-border-color: transparent transparent #F3F4F6 transparent; -fx-border-width: 1;">
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #374151;" text="Espuma limpiadora" HBox.hgrow="ALWAYS" />
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #6B7280;" text="8 uds." />
-                    </HBox>
-                    <HBox style="-fx-padding: 8 12 8 12; -fx-background-color: #F9FAFB; -fx-border-color: transparent transparent #F3F4F6 transparent; -fx-border-width: 1;">
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #374151;" text="Franela de microfibra" HBox.hgrow="ALWAYS" />
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #6B7280;" text="5 uds." />
-                    </HBox>
-                    <HBox style="-fx-padding: 8 12 8 12;">
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #374151;" text="Cable de red cat6" HBox.hgrow="ALWAYS" />
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #6B7280;" text="10 uds." />
-                    </HBox>
-                </VBox>
+                <ScrollPane fx:id="scrollCriticos" fitToWidth="true" prefWidth="270.0"
+                    style="-fx-background: transparent; -fx-background-color: transparent; -fx-border-color: #E5E7EB; -fx-border-width: 1; -fx-border-radius: 7; -fx-background-radius: 7;">
+                    <content>
+                        <VBox fx:id="vboxListaCriticos" spacing="0.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 7;" />
+                    </content>
+                </ScrollPane>
             </HBox>
 
-            <VBox spacing="0.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-padding: 18 18 6 18;">
+            <VBox spacing="0.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-padding: 18 18 6 18;" VBox.vgrow="ALWAYS">
                 <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #111827;" text="Actividad reciente">
                     <VBox.margin><Insets bottom="10.0" /></VBox.margin>
                 </Label>
                 <Separator style="-fx-opacity: 0.5;" />
-                <HBox style="-fx-padding: 12 0 12 0; -fx-border-color: transparent transparent #F3F4F6 transparent; -fx-border-width: 1;">
-                    <Label style="-fx-font-size: 13px; -fx-text-fill: #374151;" text="Angel Nolasco registro salida de 2 memorias RAM" HBox.hgrow="ALWAYS" />
-                    <Label style="-fx-font-size: 12px; -fx-text-fill: #9CA3AF;" text="hoy, 9:40" />
-                </HBox>
-                <HBox style="-fx-padding: 12 0 12 0;">
-                    <Label style="-fx-font-size: 13px; -fx-text-fill: #374151;" text="Jonathan Aguilar reporto desecho de 3 latas de aerosol" HBox.hgrow="ALWAYS" />
-                    <Label style="-fx-font-size: 12px; -fx-text-fill: #9CA3AF;" text="hoy, 8:15" />
-                </HBox>
+                <ScrollPane fx:id="scrollActividad" fitToWidth="true"
+                    style="-fx-background: transparent; -fx-background-color: transparent; -fx-border-width: 0;" VBox.vgrow="ALWAYS">
+                    <content>
+                        <VBox fx:id="vboxActividad" spacing="0.0" />
+                    </content>
+                </ScrollPane>
             </VBox>
 
         </VBox>
