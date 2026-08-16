@@ -4,6 +4,7 @@ module utng.gtid2.jome {
     requires java.sql;
     requires com.microsoft.sqlserver.jdbc;
     requires jbcrypt;
+    requires itextpdf;
 
     opens utng.gtid2.jome to javafx.fxml;
     exports utng.gtid2.jome;

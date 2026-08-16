@@ -30,7 +30,7 @@
                </ImageView>
             </HBox>
 
-            <!-- SCROLL con todo el contenido -->
+            <!-- SCROLL -->
             <ScrollPane layoutX="0.0" layoutY="60.0" prefHeight="440.0" prefWidth="700.0" fitToWidth="true" style="-fx-background: #FFFFFF; -fx-border-width: 0;">
                <content>
                   <VBox spacing="0.0" style="-fx-padding: 20 30 20 30; -fx-background-color: #FFFFFF;">
@@ -41,24 +41,7 @@
                         <Button fx:id="btnDescargarResumen" mnemonicParsing="false" onAction="#descargarResumen" style="-fx-background-color: #E0F2FE; -fx-text-fill: #0369A1; -fx-font-size: 10px; -fx-background-radius: 4; -fx-cursor: hand; -fx-padding: 4 10 4 10;" text="⬇ Descargar" />
                      </HBox>
                      <Separator style="-fx-padding: 4 0 8 0;" />
-                     <VBox spacing="0.0" style="-fx-background-color: #F9FAFB; -fx-border-color: #E5E7EB; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 10 16 10 16;">
-                        <HBox>
-                           <Label text="Insumos registrados:" style="-fx-font-size: 12px; -fx-text-fill: #374151;" HBox.hgrow="ALWAYS" />
-                           <Label text="86" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #111827;" />
-                        </HBox>
-                        <HBox>
-                           <Label text="Insumos en estado crítico:" style="-fx-font-size: 12px; -fx-text-fill: #374151;" HBox.hgrow="ALWAYS" />
-                           <Label text="7" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #EF4444;" />
-                        </HBox>
-                        <HBox>
-                           <Label text="Técnicos activos:" style="-fx-font-size: 12px; -fx-text-fill: #374151;" HBox.hgrow="ALWAYS" />
-                           <Label text="5" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #111827;" />
-                        </HBox>
-                        <HBox>
-                           <Label text="Desecho del mes:" style="-fx-font-size: 12px; -fx-text-fill: #374151;" HBox.hgrow="ALWAYS" />
-                           <Label text="12.4 kg" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #111827;" />
-                        </HBox>
-                     </VBox>
+                     <VBox fx:id="vboxResumen" spacing="0.0" style="-fx-background-color: #F9FAFB; -fx-border-color: #E5E7EB; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 10 16 10 16;" />
 
                      <Pane prefHeight="16.0" />
 
@@ -68,67 +51,17 @@
                         <Button fx:id="btnDescargarCatalogo" mnemonicParsing="false" onAction="#descargarCatalogo" style="-fx-background-color: #E0F2FE; -fx-text-fill: #0369A1; -fx-font-size: 10px; -fx-background-radius: 4; -fx-cursor: hand; -fx-padding: 4 10 4 10;" text="⬇ Descargar" />
                      </HBox>
                      <Separator style="-fx-padding: 4 0 8 0;" />
-                     <VBox spacing="0.0" style="-fx-border-color: #E5E7EB; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;">
-                        <HBox style="-fx-background-color: #F3F4F6; -fx-padding: 6 16 6 16; -fx-background-radius: 6 6 0 0;">
-                           <Label text="Código" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" prefWidth="80.0" />
-                           <Label text="Nombre" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" prefWidth="180.0" />
-                           <Label text="Categoría" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" prefWidth="120.0" />
-                           <Label text="Cantidad" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" />
-                        </HBox>
-                        <HBox style="-fx-padding: 6 16 6 16; -fx-border-color: transparent transparent #F3F4F6 transparent; -fx-border-width: 1;">
-                           <Label text="P001" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="80.0" />
-                           <Label text="Laptop Dell" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="180.0" />
-                           <Label text="Insumo" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="120.0" />
-                           <Label text="2" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
-                        </HBox>
-                        <HBox style="-fx-background-color: #F9FAFB; -fx-padding: 6 16 6 16; -fx-border-color: transparent transparent #F3F4F6 transparent; -fx-border-width: 1;">
-                           <Label text="P002" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="80.0" />
-                           <Label text="Tinta Negra" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="180.0" />
-                           <Label text="Consumible" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="120.0" />
-                           <Label text="5" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
-                        </HBox>
-                        <HBox style="-fx-padding: 6 16 6 16;">
-                           <Label text="P003" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="80.0" />
-                           <Label text="Cable HDMI" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="180.0" />
-                           <Label text="Insumo" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="120.0" />
-                           <Label text="10" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
-                        </HBox>
-                     </VBox>
+                     <VBox fx:id="vboxCatalogo" spacing="0.0" style="-fx-border-color: #E5E7EB; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;" />
 
                      <Pane prefHeight="16.0" />
 
                      <!-- ASIGNACIONES -->
                      <HBox alignment="CENTER_LEFT">
-                        <Label text="Asignaciones" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1F2937;" HBox.hgrow="ALWAYS" />
+                        <Label text="Historial de Préstamos" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1F2937;" HBox.hgrow="ALWAYS" />
                         <Button fx:id="btnDescargarAsignaciones" mnemonicParsing="false" onAction="#descargarAsignaciones" style="-fx-background-color: #E0F2FE; -fx-text-fill: #0369A1; -fx-font-size: 10px; -fx-background-radius: 4; -fx-cursor: hand; -fx-padding: 4 10 4 10;" text="⬇ Descargar" />
                      </HBox>
                      <Separator style="-fx-padding: 4 0 8 0;" />
-                     <VBox spacing="0.0" style="-fx-border-color: #E5E7EB; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;">
-                        <HBox style="-fx-background-color: #F3F4F6; -fx-padding: 6 16 6 16; -fx-background-radius: 6 6 0 0;">
-                           <Label text="Folio" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" prefWidth="80.0" />
-                           <Label text="Técnico" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" prefWidth="180.0" />
-                           <Label text="Material" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" prefWidth="120.0" />
-                           <Label text="Fecha" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" />
-                        </HBox>
-                        <HBox style="-fx-padding: 6 16 6 16; -fx-border-color: transparent transparent #F3F4F6 transparent; -fx-border-width: 1;">
-                           <Label text="F001" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="80.0" />
-                           <Label text="Angel Nolasco" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="180.0" />
-                           <Label text="RAM 8GB" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="120.0" />
-                           <Label text="10/06/26" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
-                        </HBox>
-                        <HBox style="-fx-background-color: #F9FAFB; -fx-padding: 6 16 6 16; -fx-border-color: transparent transparent #F3F4F6 transparent; -fx-border-width: 1;">
-                           <Label text="F002" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="80.0" />
-                           <Label text="Jonathan Aguilar" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="180.0" />
-                           <Label text="Cable Red" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="120.0" />
-                           <Label text="12/06/26" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
-                        </HBox>
-                        <HBox style="-fx-padding: 6 16 6 16;">
-                           <Label text="F003" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="80.0" />
-                           <Label text="Jesus Omar" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="180.0" />
-                           <Label text="Laptop Dell" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="120.0" />
-                           <Label text="15/06/26" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
-                        </HBox>
-                     </VBox>
+                     <VBox fx:id="vboxAsignaciones" spacing="0.0" style="-fx-border-color: #E5E7EB; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;" />
 
                      <Pane prefHeight="16.0" />
 
@@ -138,32 +71,7 @@
                         <Button fx:id="btnDescargarDesecho" mnemonicParsing="false" onAction="#descargarDesecho" style="-fx-background-color: #E0F2FE; -fx-text-fill: #0369A1; -fx-font-size: 10px; -fx-background-radius: 4; -fx-cursor: hand; -fx-padding: 4 10 4 10;" text="⬇ Descargar" />
                      </HBox>
                      <Separator style="-fx-padding: 4 0 8 0;" />
-                     <VBox spacing="0.0" style="-fx-border-color: #E5E7EB; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;">
-                        <HBox style="-fx-background-color: #F3F4F6; -fx-padding: 6 16 6 16; -fx-background-radius: 6 6 0 0;">
-                           <Label text="Código" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" prefWidth="80.0" />
-                           <Label text="Equipo" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" prefWidth="180.0" />
-                           <Label text="Motivo" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" prefWidth="120.0" />
-                           <Label text="Fecha" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" />
-                        </HBox>
-                        <HBox style="-fx-padding: 6 16 6 16; -fx-border-color: transparent transparent #F3F4F6 transparent; -fx-border-width: 1;">
-                           <Label text="E001" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="80.0" />
-                           <Label text="Monitor Samsung" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="180.0" />
-                           <Label text="Pantalla rota" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="120.0" />
-                           <Label text="01/06/26" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
-                        </HBox>
-                        <HBox style="-fx-background-color: #F9FAFB; -fx-padding: 6 16 6 16; -fx-border-color: transparent transparent #F3F4F6 transparent; -fx-border-width: 1;">
-                           <Label text="E002" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="80.0" />
-                           <Label text="Teclado Logitech" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="180.0" />
-                           <Label text="No enciende" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="120.0" />
-                           <Label text="05/06/26" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
-                        </HBox>
-                        <HBox style="-fx-padding: 6 16 6 16;">
-                           <Label text="E003" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="80.0" />
-                           <Label text="Mouse HP" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="180.0" />
-                           <Label text="Desgaste" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="120.0" />
-                           <Label text="08/06/26" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
-                        </HBox>
-                     </VBox>
+                     <VBox fx:id="vboxDesecho" spacing="0.0" style="-fx-border-color: #E5E7EB; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;" />
 
                      <Pane prefHeight="16.0" />
 
@@ -173,28 +81,7 @@
                         <Button fx:id="btnDescargarUsuarios" mnemonicParsing="false" onAction="#descargarUsuarios" style="-fx-background-color: #E0F2FE; -fx-text-fill: #0369A1; -fx-font-size: 10px; -fx-background-radius: 4; -fx-cursor: hand; -fx-padding: 4 10 4 10;" text="⬇ Descargar" />
                      </HBox>
                      <Separator style="-fx-padding: 4 0 8 0;" />
-                     <VBox spacing="0.0" style="-fx-border-color: #E5E7EB; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;">
-                        <HBox style="-fx-background-color: #F3F4F6; -fx-padding: 6 16 6 16; -fx-background-radius: 6 6 0 0;">
-                           <Label text="ID" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" prefWidth="80.0" />
-                           <Label text="Nombre" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" prefWidth="240.0" />
-                           <Label text="Rol" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #6B7280;" />
-                        </HBox>
-                        <HBox style="-fx-padding: 6 16 6 16; -fx-border-color: transparent transparent #F3F4F6 transparent; -fx-border-width: 1;">
-                           <Label text="001" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="80.0" />
-                           <Label text="Jesus Omar" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="240.0" />
-                           <Label text="Admin" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
-                        </HBox>
-                        <HBox style="-fx-background-color: #F9FAFB; -fx-padding: 6 16 6 16; -fx-border-color: transparent transparent #F3F4F6 transparent; -fx-border-width: 1;">
-                           <Label text="002" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="80.0" />
-                           <Label text="Jesua Rico" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="240.0" />
-                           <Label text="Tecnico" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
-                        </HBox>
-                        <HBox style="-fx-padding: 6 16 6 16;">
-                           <Label text="003" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="80.0" />
-                           <Label text="Angel de Jesus" style="-fx-font-size: 12px; -fx-text-fill: #374151;" prefWidth="240.0" />
-                           <Label text="Usuario" style="-fx-font-size: 12px; -fx-text-fill: #374151;" />
-                        </HBox>
-                     </VBox>
+                     <VBox fx:id="vboxUsuarios" spacing="0.0" style="-fx-border-color: #E5E7EB; -fx-border-width: 1; -fx-border-radius: 6; -fx-background-radius: 6;" />
 
                   </VBox>
                </content>
@@ -202,7 +89,7 @@
 
             <!-- FOOTER BOTONES -->
             <HBox layoutX="0.0" layoutY="500.0" prefWidth="700.0" prefHeight="60.0" alignment="CENTER_LEFT" spacing="12.0" style="-fx-padding: 12 24 12 24; -fx-border-color: #E5E7EB; -fx-border-width: 1 0 0 0;">
-               <Button fx:id="btnDescargar" mnemonicParsing="false" onAction="#descargarReporte" prefHeight="34.0" prefWidth="180.0" style="-fx-background-color: #2E7D32; -fx-background-radius: 4; -fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-font-weight: bold; -fx-cursor: hand;" text="⬇ Descargar Todo (PDF)" />
+               <Button fx:id="btnDescargar" mnemonicParsing="false" onAction="#descargarReporte" prefHeight="34.0" prefWidth="200.0" style="-fx-background-color: #2E7D32; -fx-background-radius: 4; -fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-font-weight: bold; -fx-cursor: hand;" text="⬇ Descargar Todo (PDF)" />
                <Pane HBox.hgrow="ALWAYS" />
                <Button fx:id="btnVolver" mnemonicParsing="false" onAction="#accionVolver" prefHeight="34.0" style="-fx-background-color: linear-gradient(to bottom right, #4ba4ff, #26d6ff); -fx-background-radius: 4; -fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-cursor: hand;" text="Volver al menú" />
             </HBox>

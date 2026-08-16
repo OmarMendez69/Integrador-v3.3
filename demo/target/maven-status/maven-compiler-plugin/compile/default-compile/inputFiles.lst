@@ -10,6 +10,7 @@ C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\jome\Re
 C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\conexion\ConexionBD.java
 C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\jome\AgregarProductoController.java
 C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\modelo\Usuario.java
+C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\dao\DashboardDAO.java
 C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\dao\MaterialDAO.java
 C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\dao\UsuarioDAO.java
 C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\jome\CatalogoController.java
@@ -25,6 +26,7 @@ C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\jome\Li
 C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\modelo\Desecho.java
 C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\modelo\Proveedor.java
 C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\modelo\Material.java
+C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\jome\Sesion.java
 C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\jome\AgregarUsuarioController.java
 C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\utng\gtid2\jome\ListaAsignacionesController.java
 C:\Users\om705\OneDrive\Desktop\Integrador\demo\src\main\java\module-info.java

@@ -2,6 +2,8 @@ utng\gtid2\jome\AsignacionesController.class
 utng\gtid2\jome\ReporteDetalleController.class
 utng\gtid2\jome\AgregarProveedorController.class
 utng\gtid2\jome\CatalogoController.class
+utng\gtid2\jome\Sesion.class
+utng\gtid2\dao\DashboardDAO.class
 utng\gtid2\dao\DesechoDAO.class
 utng\gtid2\jome\ListaAsignacionesController.class
 utng\gtid2\modelo\Prestamo.class
