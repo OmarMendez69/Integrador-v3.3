@@ -86,6 +86,16 @@ public class RegistroDesechoController implements Initializable {
                 cmbResponsable.getItems().add(usuario.getNombre());
                 usuariosPorNombre.put(usuario.getNombre(), usuario);
             }
+
+            // Auto-seleccionar al usuario en sesión y bloquear el campo
+            if (Sesion.estaActiva()) {
+                String nombreSesion = Sesion.getNombre();
+                if (cmbResponsable.getItems().contains(nombreSesion)) {
+                    cmbResponsable.setValue(nombreSesion);
+                }
+                cmbResponsable.setDisable(true);
+            }
+
         } catch (SQLException e) {
             lblError.setText("No se pudieron cargar los usuarios: " + e.getMessage());
         }
@@ -199,7 +209,6 @@ public class RegistroDesechoController implements Initializable {
         txtPeso.clear();
         txtMotivo.clear();
         txtFecha.clear();
-        cmbResponsable.getSelectionModel().clearSelection();
         txtDescripcion.clear();
         lblError.setText("");
     }
