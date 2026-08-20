@@ -2,11 +2,13 @@ package utng.gtid2.jome;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.collections.FXCollections;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -25,12 +27,17 @@ public class AgregarUsuarioController {
     @FXML private TextField txtUsername;
     @FXML private Label lblPassword;
     @FXML private PasswordField txtPassword;
-    @FXML private TextField txtRol;
+    @FXML private ComboBox<String> cmbRol;
     @FXML private Button btnGuardar;
 
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
     private boolean modoEdicion = false;
     private int idUsuario;
+
+    @FXML
+    public void initialize() {
+        cmbRol.setItems(FXCollections.observableArrayList("Admin", "Tecnico", "Usuario"));
+    }
 
     public void cargarUsuario(Usuario usuario) {
         modoEdicion = true;
@@ -38,7 +45,7 @@ public class AgregarUsuarioController {
 
         txtNombre.setText(usuario.getNombre());
         txtUsername.setText(usuario.getUsername());
-        txtRol.setText(usuario.getRol());
+        cmbRol.setValue(usuario.getRol());
         btnGuardar.setText("Actualizar");
         lblTitulo.setText("Editar Usuario");
 
@@ -56,15 +63,10 @@ public class AgregarUsuarioController {
         String nombre = txtNombre.getText().trim();
         String username = txtUsername.getText().trim();
         String password = txtPassword.getText();
-        String rol = txtRol.getText().trim();
+        String rol = cmbRol.getValue();
 
-        if (nombre.isEmpty() || rol.isEmpty() || (!modoEdicion && (username.isEmpty() || password.isEmpty()))) {
+        if (nombre.isEmpty() || rol == null || rol.isEmpty() || (!modoEdicion && (username.isEmpty() || password.isEmpty()))) {
             mostrarAlerta("Completa todos los campos requeridos.");
-            return;
-        }
-
-        if (!rol.equalsIgnoreCase("Admin") && !rol.equalsIgnoreCase("Tecnico") && !rol.equalsIgnoreCase("Usuario")) {
-            mostrarAlerta("El rol debe ser Admin, Tecnico o Usuario.");
             return;
         }
 
@@ -94,7 +96,7 @@ public class AgregarUsuarioController {
         txtNombre.clear();
         txtUsername.clear();
         txtPassword.clear();
-        txtRol.clear();
+        cmbRol.setValue(null);
     }
 
     @FXML
