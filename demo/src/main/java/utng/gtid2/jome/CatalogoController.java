@@ -92,6 +92,8 @@ public class CatalogoController {
             btnActualizar.setManaged(false);
             btnEliminarMaterial.setVisible(false);
             btnEliminarMaterial.setManaged(false);
+            btnReabastecer.setVisible(false);
+            btnReabastecer.setManaged(false);
         }
     }
 
