@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
@@ -38,12 +39,12 @@
             <Label layoutX="240.0" layoutY="92.0" text="Fecha de Préstamo">
                <font><Font name="System Bold" size="10.0" /></font>
             </Label>
-            <TextField fx:id="txtFechaPrestamo" layoutX="240.0" layoutY="108.0" prefHeight="30.0" prefWidth="140.0" promptText="dd/mm/aaaa" style="-fx-background-radius: 6; -fx-border-color: #d9dee3; -fx-border-radius: 6;" />
+            <DatePicker fx:id="dpFechaPrestamo" layoutX="240.0" layoutY="108.0" prefHeight="30.0" prefWidth="140.0" promptText="dd/mm/aaaa" style="-fx-background-radius: 6; -fx-border-color: #d9dee3; -fx-border-radius: 6;" />
 
             <Label layoutX="400.0" layoutY="92.0" text="Fecha Devolución">
                <font><Font name="System Bold" size="10.0" /></font>
             </Label>
-            <TextField fx:id="txtFechaDevolucion" layoutX="400.0" layoutY="108.0" prefHeight="30.0" prefWidth="120.0" promptText="dd/mm/aaaa" style="-fx-background-radius: 6; -fx-border-color: #d9dee3; -fx-border-radius: 6;" />
+            <DatePicker fx:id="dpFechaDevolucion" layoutX="400.0" layoutY="108.0" prefHeight="30.0" prefWidth="120.0" promptText="dd/mm/aaaa" style="-fx-background-radius: 6; -fx-border-color: #d9dee3; -fx-border-radius: 6;" />
 
             <!-- ===== Fila 2: Insumo + Responsable ===== -->
             <Label layoutX="40.0" layoutY="156.0" text="Insumo Prestado">

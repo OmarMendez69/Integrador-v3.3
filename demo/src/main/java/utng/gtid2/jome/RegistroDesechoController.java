@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -24,7 +25,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -36,7 +36,7 @@ public class RegistroDesechoController implements Initializable {
     @FXML private TextField txtCantidad;
     @FXML private TextField txtPeso;
     @FXML private TextField txtMotivo;
-    @FXML private TextField txtFecha;
+    @FXML private DatePicker dpFecha;
     @FXML private ComboBox<String> cmbResponsable;
     @FXML private TextArea txtDescripcion;
     @FXML private Label lblError;
@@ -87,7 +87,6 @@ public class RegistroDesechoController implements Initializable {
                 usuariosPorNombre.put(usuario.getNombre(), usuario);
             }
 
-            // Auto-seleccionar al usuario en sesión y bloquear el campo
             if (Sesion.estaActiva()) {
                 String nombreSesion = Sesion.getNombre();
                 if (cmbResponsable.getItems().contains(nombreSesion)) {
@@ -118,7 +117,16 @@ public class RegistroDesechoController implements Initializable {
         txtCantidad.setText(String.valueOf(desecho.getCantidad()));
         txtPeso.setText(String.valueOf(desecho.getPeso()));
         txtMotivo.setText(desecho.getMotivo());
-        txtFecha.setText(desecho.getFechaTexto());
+
+        String fechaTexto = desecho.getFechaTexto();
+        if (fechaTexto != null && !fechaTexto.isBlank()) {
+            try {
+                dpFecha.setValue(LocalDate.parse(fechaTexto, FORMATO_FECHA));
+            } catch (Exception e) {
+                dpFecha.setValue(null);
+            }
+        }
+
         cmbResponsable.setValue(desecho.getUsuarioNombre());
         txtDescripcion.setText(desecho.getDescripcion());
 
@@ -136,20 +144,12 @@ public class RegistroDesechoController implements Initializable {
         String textoCantidad = txtCantidad.getText().trim();
         String textoPeso = txtPeso.getText().trim();
         String motivo = txtMotivo.getText().trim();
-        String textoFecha = txtFecha.getText().trim();
+        LocalDate fecha = dpFecha.getValue();
         String nombreResponsable = cmbResponsable.getValue();
 
         if (nombreInsumo == null || textoCantidad.isEmpty() || textoPeso.isEmpty()
-                || motivo.isEmpty() || textoFecha.isEmpty() || nombreResponsable == null) {
+                || motivo.isEmpty() || fecha == null || nombreResponsable == null) {
             lblError.setText("Completa Insumo, Cantidad, Peso, Motivo, Fecha y Responsable antes de guardar.");
-            return;
-        }
-
-        LocalDate fecha;
-        try {
-            fecha = LocalDate.parse(textoFecha, FORMATO_FECHA);
-        } catch (DateTimeParseException e) {
-            lblError.setText("La fecha debe tener formato dd/mm/aaaa.");
             return;
         }
 
@@ -208,7 +208,7 @@ public class RegistroDesechoController implements Initializable {
         txtCantidad.clear();
         txtPeso.clear();
         txtMotivo.clear();
-        txtFecha.clear();
+        dpFecha.setValue(null);
         txtDescripcion.clear();
         lblError.setText("");
     }

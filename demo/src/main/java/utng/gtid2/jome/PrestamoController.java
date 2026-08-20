@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -23,8 +24,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -34,14 +33,12 @@ public class PrestamoController implements Initializable {
     @FXML private TextField txtFolio;
     @FXML private ComboBox<String> cmbInsumo;
     @FXML private ComboBox<String> cmbResponsable;
-    @FXML private TextField txtFechaPrestamo;
-    @FXML private TextField txtFechaDevolucion;
+    @FXML private DatePicker dpFechaPrestamo;
+    @FXML private DatePicker dpFechaDevolucion;
     @FXML private TextField txtObservaciones;
     @FXML private Label lblError;
     @FXML private Button btnVolver;
     @FXML private Button btnVerHistorial;
-
-    private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private final MaterialDAO materialDAO = new MaterialDAO();
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
@@ -82,7 +79,6 @@ public class PrestamoController implements Initializable {
                 usuariosPorNombre.put(usuario.getNombre(), usuario);
             }
 
-            // Auto-seleccionar al usuario en sesión y bloquear el campo
             if (Sesion.estaActiva()) {
                 String nombreSesion = Sesion.getNombre();
                 if (cmbResponsable.getItems().contains(nombreSesion)) {
@@ -109,24 +105,16 @@ public class PrestamoController implements Initializable {
         String folio = txtFolio.getText();
         String nombreInsumo = cmbInsumo.getValue();
         String nombreResponsable = cmbResponsable.getValue();
-        String textoFechaPrestamo = txtFechaPrestamo.getText().trim();
-        String textoFechaDevolucion = txtFechaDevolucion.getText().trim();
+        LocalDate fechaPrestamo = dpFechaPrestamo.getValue();
+        LocalDate fechaDevolucion = dpFechaDevolucion.getValue();
 
-        if (nombreInsumo == null || nombreResponsable == null || textoFechaPrestamo.isEmpty()) {
+        if (nombreInsumo == null || nombreResponsable == null || fechaPrestamo == null) {
             lblError.setText("Completa Insumo, Responsable y Fecha de Préstamo antes de registrar.");
             return;
         }
 
-        LocalDate fechaPrestamo;
-        LocalDate fechaDevolucion;
-        try {
-            fechaPrestamo = LocalDate.parse(textoFechaPrestamo, FORMATO_FECHA);
-            fechaDevolucion = textoFechaDevolucion.isEmpty()
-                    ? fechaPrestamo.plusDays(7)
-                    : LocalDate.parse(textoFechaDevolucion, FORMATO_FECHA);
-        } catch (DateTimeParseException e) {
-            lblError.setText("Las fechas deben tener formato dd/mm/aaaa.");
-            return;
+        if (fechaDevolucion == null) {
+            fechaDevolucion = fechaPrestamo.plusDays(7);
         }
 
         Material material = materialesPorNombre.get(nombreInsumo);
@@ -167,8 +155,8 @@ public class PrestamoController implements Initializable {
     @FXML
     private void accionCancelar() {
         cmbInsumo.getSelectionModel().clearSelection();
-        txtFechaPrestamo.clear();
-        txtFechaDevolucion.clear();
+        dpFechaPrestamo.setValue(null);
+        dpFechaDevolucion.setValue(null);
         txtObservaciones.clear();
         lblError.setText("");
     }
