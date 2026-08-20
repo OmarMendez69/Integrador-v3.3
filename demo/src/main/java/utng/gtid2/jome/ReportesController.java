@@ -28,6 +28,7 @@ import utng.gtid2.modelo.Usuario;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -132,15 +133,16 @@ public class ReportesController {
     private void poblarAsignaciones() {
         vboxAsignaciones.getChildren().clear();
         vboxAsignaciones.getChildren().add(headerFila(
-                new String[]{"Folio", "Insumo", "Responsable", "F. Préstamo", "F. Devolución", "Estado"},
-                new double[]{60, 125, 125, 85, 85, 70}));
+                new String[]{"Folio", "Insumo", "Responsable", "Cantidad", "F. Préstamo", "F. Devolución", "Estado"},
+                new double[]{55, 115, 115, 60, 80, 80, 60}));
         for (int i = 0; i < prestamos.size(); i++) {
             Prestamo p = prestamos.get(i);
             String color = "Vencido".equals(p.getEstadoTexto()) ? "#EF4444" : "#374151";
             vboxAsignaciones.getChildren().add(dataFila(new String[]{
                     p.getFolio(), p.getMaterialNombre(), p.getUsuarioNombre(),
+                    String.valueOf(p.getCantidad()),
                     p.getFechaPrestamoTexto(), p.getFechaDevolucionTexto(), p.getEstadoTexto()
-            }, new double[]{60, 125, 125, 85, 85, 70}, i, color));
+            }, new double[]{55, 115, 115, 60, 80, 80, 60}, i, color));
         }
     }
 
@@ -263,14 +265,15 @@ public class ReportesController {
             PdfWriter.getInstance(doc, new FileOutputStream(f));
             doc.open();
             encabezado(doc, "Historial de Préstamos");
-            PdfPTable t = new PdfPTable(6);
+            PdfPTable t = new PdfPTable(7);
             t.setWidthPercentage(100);
-            t.setWidths(new float[]{1, 2, 2, 2, 2, 1});
-            for (String h : new String[]{"Folio", "Insumo", "Responsable", "F. Préstamo", "F. Devolución", "Estado"}) hCell(t, h);
+            t.setWidths(new float[]{1, 2, 2, 1, 2, 2, 1});
+            for (String h : new String[]{"Folio", "Insumo", "Responsable", "Cantidad", "F. Préstamo", "F. Devolución", "Estado"}) hCell(t, h);
             for (Prestamo p : prestamos) {
                 dCell(t, p.getFolio(),                false);
                 dCell(t, p.getMaterialNombre(),       false);
                 dCell(t, p.getUsuarioNombre(),        false);
+                dCell(t, String.valueOf(p.getCantidad()), false);
                 dCell(t, p.getFechaPrestamoTexto(),   false);
                 dCell(t, p.getFechaDevolucionTexto(), false);
                 dCell(t, p.getEstadoTexto(), "Vencido".equals(p.getEstadoTexto()));
@@ -379,14 +382,15 @@ public class ReportesController {
             doc.add(tCat);
 
             titulo(doc, "Historial de Préstamos");
-            PdfPTable tPre = new PdfPTable(6);
+            PdfPTable tPre = new PdfPTable(7);
             tPre.setWidthPercentage(100);
-            tPre.setWidths(new float[]{1, 2, 2, 2, 2, 1});
-            for (String h : new String[]{"Folio", "Insumo", "Responsable", "F. Préstamo", "F. Devolución", "Estado"}) hCell(tPre, h);
+            tPre.setWidths(new float[]{1, 2, 2, 1, 2, 2, 1});
+            for (String h : new String[]{"Folio", "Insumo", "Responsable", "Cantidad", "F. Préstamo", "F. Devolución", "Estado"}) hCell(tPre, h);
             for (Prestamo p : prestamos) {
                 dCell(tPre, p.getFolio(),                false);
                 dCell(tPre, p.getMaterialNombre(),       false);
                 dCell(tPre, p.getUsuarioNombre(),        false);
+                dCell(tPre, String.valueOf(p.getCantidad()), false);
                 dCell(tPre, p.getFechaPrestamoTexto(),   false);
                 dCell(tPre, p.getFechaDevolucionTexto(), false);
                 dCell(tPre, p.getEstadoTexto(), "Vencido".equals(p.getEstadoTexto()));
@@ -441,10 +445,25 @@ public class ReportesController {
     }
 
     private void encabezado(Document doc, String texto) throws DocumentException {
+        // Logo institucional
+        try {
+            URL logoUrl = getClass().getResource("/utng/gtid2/images/logosUTNG.png");
+            if (logoUrl != null) {
+                Image logo = Image.getInstance(logoUrl);
+                logo.scaleToFit(300, 60);
+                logo.setAlignment(Element.ALIGN_CENTER);
+                doc.add(logo);
+            }
+        } catch (Exception e) {
+            // Si no carga el logo, continúa sin él
+        }
+
         Font fTitulo = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD, C_MORADO);
         Paragraph pTit = new Paragraph("CGTI  |  " + texto, fTitulo);
         pTit.setAlignment(Element.ALIGN_CENTER);
+        pTit.setSpacingBefore(6);
         doc.add(pTit);
+
         Font fFecha = new Font(Font.FontFamily.HELVETICA, 9, Font.NORMAL, C_GRIS);
         Paragraph pFecha = new Paragraph("Generado el: " +
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")), fFecha);
