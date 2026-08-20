@@ -43,6 +43,7 @@ public class CatalogoController {
     @FXML private Button btnAgregarMaterial;
     @FXML private Button btnActualizar;
     @FXML private Button btnEliminarMaterial;
+    @FXML private Button btnReabastecer;
 
     private final MaterialDAO materialDAO = new MaterialDAO();
     private final ObservableList<Material> listaCompleta = FXCollections.observableArrayList();
@@ -194,6 +195,26 @@ public class CatalogoController {
         Stage stage = (Stage) btnVolver.getScene().getWindow();
         stage.setScene(new Scene(root));
         stage.setTitle("Eliminar Producto");
+        stage.show();
+    }
+
+    @FXML
+    private void handleReabastecer() throws IOException {
+        Material seleccionado = tablaMateriales.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            mostrarError("Selecciona un material de la tabla para reabastecer.");
+            return;
+        }
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("from_Reabastecer.fxml"));
+        Parent root = loader.load();
+
+        ReabastecerController controller = loader.getController();
+        controller.cargarMaterial(seleccionado);
+
+        Stage stage = (Stage) btnVolver.getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.setTitle("Reabastecer Material");
         stage.show();
     }
 

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="480.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #b721ff 0%, #21d4fd 100%);" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="utng.gtid2.jome.ReabastecerController">
+   <children>
+      <Pane layoutX="40.0" layoutY="40.0" prefHeight="520.0" prefWidth="400.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 14, 0, 0, 4);">
+         <children>
+
+            <!-- ===== Encabezado ===== -->
+            <ImageView fitHeight="36.0" layoutX="30.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true">
+               <image><Image url="@../images/Logo.png" /></image>
+            </ImageView>
+            <Label layoutX="74.0" layoutY="22.0" text="CGTI">
+               <font><Font name="System Bold" size="20.0" /></font>
+            </Label>
+            <Label layoutX="74.0" layoutY="48.0" text="Reabastecer material" textFill="#2E7D32">
+               <font><Font name="System Bold" size="13.0" /></font>
+            </Label>
+
+            <Separator layoutX="30.0" layoutY="72.0" prefWidth="340.0" />
+
+            <!-- ===== Tarjeta de resumen del material (solo lectura) ===== -->
+            <VBox layoutX="30.0" layoutY="88.0" prefWidth="340.0" spacing="4.0" style="-fx-background-color: #F4F9F4; -fx-background-radius: 10; -fx-border-color: #CDE7CD; -fx-border-radius: 10; -fx-padding: 14;">
+               <children>
+                  <Label style="-fx-font-size: 10px; -fx-text-fill: #6b7280; -fx-font-weight: BOLD;" text="MATERIAL SELECCIONADO" />
+                  <Label fx:id="lblNombreMaterial" style="-fx-font-size: 16px; -fx-text-fill: #1A3C5E; -fx-font-weight: BOLD;" text="Nombre del material" wrapText="true" />
+                  <HBox spacing="20.0">
+                     <children>
+                        <VBox>
+                           <children>
+                              <Label style="-fx-font-size: 10px; -fx-text-fill: #6b7280;" text="Disponible" />
+                              <Label fx:id="lblDisponibleActual" style="-fx-font-size: 14px; -fx-text-fill: #2E7D32; -fx-font-weight: BOLD;" text="0" />
+                           </children>
+                        </VBox>
+                        <VBox>
+                           <children>
+                              <Label style="-fx-font-size: 10px; -fx-text-fill: #6b7280;" text="Total" />
+                              <Label fx:id="lblTotalActual" style="-fx-font-size: 14px; -fx-text-fill: #1A3C5E; -fx-font-weight: BOLD;" text="0" />
+                           </children>
+                        </VBox>
+                        <VBox>
+                           <children>
+                              <Label style="-fx-font-size: 10px; -fx-text-fill: #6b7280;" text="Estado" />
+                              <Label fx:id="lblEstadoActual" style="-fx-font-size: 14px; -fx-font-weight: BOLD;" text="—" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+
+            <!-- ===== Formulario ===== -->
+            <Label layoutX="30.0" layoutY="196.0" text="Cantidad a añadir">
+               <font><Font name="System Bold" size="11.0" /></font>
+            </Label>
+            <TextField fx:id="txtCantidadAAgregar" layoutX="30.0" layoutY="214.0" prefHeight="34.0" prefWidth="340.0" promptText="Ej. 20" style="-fx-background-radius: 6; -fx-border-color: #d9dee3; -fx-border-radius: 6; -fx-font-size: 13px;" />
+
+            <Label layoutX="30.0" layoutY="260.0" text="Fecha de entrada">
+               <font><Font name="System Bold" size="11.0" /></font>
+            </Label>
+            <DatePicker fx:id="dpFechaEntrada" layoutX="30.0" layoutY="278.0" prefHeight="34.0" prefWidth="340.0" promptText="dd/mm/aaaa" style="-fx-background-radius: 6; -fx-border-color: #d9dee3; -fx-border-radius: 6;" />
+
+            <Label layoutX="30.0" layoutY="324.0" text="Observaciones (opcional)">
+               <font><Font name="System Bold" size="11.0" /></font>
+            </Label>
+            <TextArea fx:id="txtObservaciones" layoutX="30.0" layoutY="342.0" prefHeight="80.0" prefWidth="340.0" promptText="Ej. Compra a proveedor XYZ, factura #1234..." style="-fx-background-radius: 6; -fx-border-color: #d9dee3; -fx-border-radius: 6; -fx-font-size: 12px;" wrapText="true" />
+
+            <!-- ===== Vista previa del nuevo stock ===== -->
+            <Label fx:id="lblPreview" layoutX="30.0" layoutY="432.0" prefWidth="340.0" style="-fx-font-size: 11px; -fx-text-fill: #2E7D32; -fx-font-weight: BOLD;" text="" wrapText="true" />
+
+            <!-- ===== Mensaje de error ===== -->
+            <Label fx:id="lblError" layoutX="30.0" layoutY="452.0" prefWidth="340.0" textFill="#e53935" wrapText="true">
+               <font><Font size="10.0" /></font>
+            </Label>
+
+            <Separator layoutX="30.0" layoutY="475.0" prefWidth="340.0" />
+
+            <!-- ===== Botones ===== -->
+            <Button fx:id="btnGuardar" layoutX="30.0" layoutY="486.0" mnemonicParsing="false" onAction="#guardarReabastecimiento" prefHeight="36.0" prefWidth="165.0" style="-fx-background-color: linear-gradient(to bottom right, #2E7D32, #43A047); -fx-background-radius: 6; -fx-cursor: hand;" text="✔ Reabastecer" textFill="WHITE">
+               <font><Font name="System Bold" size="13.0" /></font>
+            </Button>
+            <Button fx:id="btnCancelar" layoutX="205.0" layoutY="486.0" mnemonicParsing="false" onAction="#accionCancelar" prefHeight="36.0" prefWidth="165.0" style="-fx-background-color: #e53935; -fx-background-radius: 6; -fx-cursor: hand;" text="Cancelar" textFill="WHITE">
+               <font><Font name="System Bold" size="13.0" /></font>
+            </Button>
+
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

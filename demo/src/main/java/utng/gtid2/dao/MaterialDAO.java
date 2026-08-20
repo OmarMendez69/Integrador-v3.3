@@ -78,6 +78,56 @@ public class MaterialDAO {
         }
     }
 
+    /**
+     * Reabastece un material existente: suma la cantidad tanto al total
+     * como al disponible, y recalcula el estado (Crítico / Disponible).
+     * No crea un registro nuevo, evita duplicados.
+     */
+    public void reabastecer(int idMaterial, int cantidadAAgregar) throws SQLException {
+        if (cantidadAAgregar <= 0) {
+            throw new SQLException("La cantidad a reabastecer debe ser mayor a 0.");
+        }
+
+        String sqlSelect = "SELECT cantidadTotal, cantidadDisponible FROM dbo.Materiales WHERE idMaterial = ?";
+        String sqlUpdate = "UPDATE dbo.Materiales SET cantidadTotal = ?, cantidadDisponible = ?, estado = ? "
+                + "WHERE idMaterial = ?";
+
+        try (Connection conexion = ConexionBD.conectar()) {
+            conexion.setAutoCommit(false);
+            try {
+                int totalActual;
+                int disponibleActual;
+                try (PreparedStatement ps = conexion.prepareStatement(sqlSelect)) {
+                    ps.setInt(1, idMaterial);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (!rs.next()) {
+                            throw new SQLException("El material seleccionado ya no existe.");
+                        }
+                        totalActual = rs.getInt("cantidadTotal");
+                        disponibleActual = rs.getInt("cantidadDisponible");
+                    }
+                }
+
+                int nuevoTotal = totalActual + cantidadAAgregar;
+                int nuevoDisponible = disponibleActual + cantidadAAgregar;
+                String estado = nuevoDisponible <= 10 ? "Crítico" : "Disponible";
+
+                try (PreparedStatement ps = conexion.prepareStatement(sqlUpdate)) {
+                    ps.setInt(1, nuevoTotal);
+                    ps.setInt(2, nuevoDisponible);
+                    ps.setString(3, estado);
+                    ps.setInt(4, idMaterial);
+                    ps.executeUpdate();
+                }
+
+                conexion.commit();
+            } catch (SQLException e) {
+                conexion.rollback();
+                throw e;
+            }
+        }
+    }
+
     private Material mapearMaterial(ResultSet rs) throws SQLException {
         return new Material(
                 rs.getInt("idMaterial"),
