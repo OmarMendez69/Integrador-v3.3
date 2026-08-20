@@ -37,6 +37,7 @@ public class ListaAsignacionesController {
     @FXML private Label lblActivos;
     @FXML private Label lblVencidos;
     @FXML private Label lblDevueltos;
+    @FXML private Label lblUsuario;
 
     private final PrestamoDAO prestamoDAO = new PrestamoDAO();
     private final ObservableList<Prestamo> listaCompleta = FXCollections.observableArrayList();
@@ -53,6 +54,11 @@ public class ListaAsignacionesController {
 
         configurarColumnaAccion();
         aplicarRestriccionesPorRol();
+
+        // Mostrar usuario y rol en sesión
+        if (Sesion.estaActiva()) {
+            lblUsuario.setText("👤 " + Sesion.getNombre() + " (" + Sesion.getRol() + ")");
+        }
 
         txtBuscar.textProperty().addListener((obs, viejo, nuevo) -> aplicarFiltro());
 

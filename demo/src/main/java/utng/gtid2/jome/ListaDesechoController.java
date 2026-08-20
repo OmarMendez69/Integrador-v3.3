@@ -35,6 +35,7 @@ public class ListaDesechoController {
     @FXML private TableColumn<Desecho, String> colDescripcion;
     @FXML private Label lblTotalDesecho;
     @FXML private Label lblPesoTotal;
+    @FXML private Label lblUsuario;
 
     private final DesechoDAO desechoDAO = new DesechoDAO();
     private final ObservableList<Desecho> listaCompleta = FXCollections.observableArrayList();
@@ -57,6 +58,11 @@ public class ListaDesechoController {
                 setText(vacio || valor == null ? null : String.format("%.2f kg", valor));
             }
         });
+
+        // Mostrar usuario y rol en sesión
+        if (Sesion.estaActiva()) {
+            lblUsuario.setText("👤 " + Sesion.getNombre() + " (" + Sesion.getRol() + ")");
+        }
 
         txtBuscar.textProperty().addListener((obs, viejo, nuevo) -> aplicarFiltro());
 

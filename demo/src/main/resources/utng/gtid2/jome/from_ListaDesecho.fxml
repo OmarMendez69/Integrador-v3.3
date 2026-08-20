@@ -29,7 +29,7 @@
                 <image><Image url="@../images/Logo.png" /></image>
             </ImageView>
             <Region HBox.hgrow="ALWAYS" />
-            <Label style="-fx-font-size: 12px; -fx-text-fill: #FFFFFF;" text="👤 Admin" />
+            <Label fx:id="lblUsuario" style="-fx-font-size: 12px; -fx-text-fill: #FFFFFF;" text="👤 Admin" />
         </HBox>
 
         <HBox alignment="CENTER_LEFT" prefHeight="56.0" spacing="10.0" style="-fx-background-color: #FFFFFF; -fx-padding: 0 24 0 24; -fx-border-color: #DDE3EA; -fx-border-width: 0 0 1 0;">
