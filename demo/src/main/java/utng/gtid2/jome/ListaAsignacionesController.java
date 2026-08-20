@@ -27,6 +27,7 @@ public class ListaAsignacionesController {
     @FXML private TableView<Prestamo> tablaAsignaciones;
     @FXML private TableColumn<Prestamo, String> colFolio;
     @FXML private TableColumn<Prestamo, String> colInsumo;
+    @FXML private TableColumn<Prestamo, Integer> colCantidad;
     @FXML private TableColumn<Prestamo, String> colTecnico;
     @FXML private TableColumn<Prestamo, String> colFechaPrestamo;
     @FXML private TableColumn<Prestamo, String> colFechaDevolucion;
@@ -46,6 +47,7 @@ public class ListaAsignacionesController {
     public void initialize() {
         colFolio.setCellValueFactory(new PropertyValueFactory<>("folio"));
         colInsumo.setCellValueFactory(new PropertyValueFactory<>("materialNombre"));
+        colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colTecnico.setCellValueFactory(new PropertyValueFactory<>("usuarioNombre"));
         colFechaPrestamo.setCellValueFactory(new PropertyValueFactory<>("fechaPrestamoTexto"));
         colFechaDevolucion.setCellValueFactory(new PropertyValueFactory<>("fechaDevolucionTexto"));

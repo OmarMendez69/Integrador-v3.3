@@ -32,6 +32,8 @@ public class PrestamoController implements Initializable {
 
     @FXML private TextField txtFolio;
     @FXML private ComboBox<String> cmbInsumo;
+    @FXML private TextField txtCantidad;
+    @FXML private Label lblDisponibleInfo;
     @FXML private ComboBox<String> cmbResponsable;
     @FXML private DatePicker dpFechaPrestamo;
     @FXML private DatePicker dpFechaDevolucion;
@@ -53,6 +55,10 @@ public class PrestamoController implements Initializable {
         cargarInsumos();
         cargarResponsables();
         cargarSiguienteFolio();
+
+        txtCantidad.setText("1");
+
+        cmbInsumo.valueProperty().addListener((obs, viejo, nuevo) -> actualizarDisponibleInfo());
     }
 
     private void cargarInsumos() {
@@ -67,6 +73,18 @@ public class PrestamoController implements Initializable {
             }
         } catch (SQLException e) {
             lblError.setText("No se pudo cargar el catálogo: " + e.getMessage());
+        }
+    }
+
+    private void actualizarDisponibleInfo() {
+        String nombreInsumo = cmbInsumo.getValue();
+        if (nombreInsumo == null) {
+            lblDisponibleInfo.setText("");
+            return;
+        }
+        Material material = materialesPorNombre.get(nombreInsumo);
+        if (material != null) {
+            lblDisponibleInfo.setText("Disp: " + material.getCantidadDisponible());
         }
     }
 
@@ -107,14 +125,29 @@ public class PrestamoController implements Initializable {
         String nombreResponsable = cmbResponsable.getValue();
         LocalDate fechaPrestamo = dpFechaPrestamo.getValue();
         LocalDate fechaDevolucion = dpFechaDevolucion.getValue();
+        String textoCantidad = txtCantidad.getText() == null ? "" : txtCantidad.getText().trim();
 
         if (nombreInsumo == null || nombreResponsable == null || fechaPrestamo == null) {
             lblError.setText("Completa Insumo, Responsable y Fecha de Préstamo antes de registrar.");
             return;
         }
 
-        if (fechaDevolucion == null) {
-            fechaDevolucion = fechaPrestamo.plusDays(7);
+        if (textoCantidad.isEmpty()) {
+            lblError.setText("Indica la cantidad a prestar.");
+            return;
+        }
+
+        int cantidad;
+        try {
+            cantidad = Integer.parseInt(textoCantidad);
+        } catch (NumberFormatException e) {
+            lblError.setText("La cantidad debe ser un número entero.");
+            return;
+        }
+
+        if (cantidad <= 0) {
+            lblError.setText("La cantidad debe ser mayor a 0.");
+            return;
         }
 
         Material material = materialesPorNombre.get(nombreInsumo);
@@ -125,10 +158,21 @@ public class PrestamoController implements Initializable {
             return;
         }
 
+        if (cantidad > material.getCantidadDisponible()) {
+            lblError.setText("Solo hay " + material.getCantidadDisponible() + " unidades disponibles de \""
+                    + material.getNombre() + "\".");
+            return;
+        }
+
+        if (fechaDevolucion == null) {
+            fechaDevolucion = fechaPrestamo.plusDays(7);
+        }
+
         Prestamo prestamo = new Prestamo();
         prestamo.setFolio(folio);
         prestamo.setIdMaterial(material.getIdMaterial());
         prestamo.setIdUsuario(usuario.getIdUsuario());
+        prestamo.setCantidad(cantidad);
         prestamo.setFechaPrestamo(fechaPrestamo);
         prestamo.setFechaDevolucion(fechaDevolucion);
         prestamo.setObservaciones(txtObservaciones.getText().trim());
@@ -140,7 +184,7 @@ public class PrestamoController implements Initializable {
             Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
             confirmacion.setTitle("Préstamo registrado");
             confirmacion.setHeaderText(null);
-            confirmacion.setContentText("Préstamo de \"" + nombreInsumo + "\" registrado correctamente.");
+            confirmacion.setContentText("Préstamo de " + cantidad + " unidad(es) de \"" + nombreInsumo + "\" registrado correctamente.");
             confirmacion.showAndWait();
 
             accionCancelar();
@@ -155,6 +199,8 @@ public class PrestamoController implements Initializable {
     @FXML
     private void accionCancelar() {
         cmbInsumo.getSelectionModel().clearSelection();
+        txtCantidad.setText("1");
+        lblDisponibleInfo.setText("");
         dpFechaPrestamo.setValue(null);
         dpFechaDevolucion.setValue(null);
         txtObservaciones.clear();

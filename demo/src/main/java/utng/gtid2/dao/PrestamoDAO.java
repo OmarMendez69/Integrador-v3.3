@@ -17,7 +17,7 @@ public class PrestamoDAO {
 
     public List<Prestamo> listarTodos() throws SQLException {
         String sql = "SELECT p.idPrestamo, p.folio, p.idMaterial, m.nombre AS materialNombre, "
-                + "p.idUsuario, u.nombre AS usuarioNombre, p.fechaPrestamo, p.fechaDevolucion, "
+                + "p.idUsuario, u.nombre AS usuarioNombre, p.cantidad, p.fechaPrestamo, p.fechaDevolucion, "
                 + "p.observaciones, p.devuelto "
                 + "FROM dbo.Prestamos p "
                 + "JOIN dbo.Materiales m ON m.idMaterial = p.idMaterial "
@@ -50,8 +50,8 @@ public class PrestamoDAO {
     }
 
     public void registrarPrestamo(Prestamo prestamo) throws SQLException {
-        String sql = "INSERT INTO dbo.Prestamos (folio, idMaterial, idUsuario, fechaPrestamo, "
-                + "fechaDevolucion, observaciones, devuelto) VALUES (?, ?, ?, ?, ?, ?, 0)";
+        String sql = "INSERT INTO dbo.Prestamos (folio, idMaterial, idUsuario, cantidad, fechaPrestamo, "
+                + "fechaDevolucion, observaciones, devuelto) VALUES (?, ?, ?, ?, ?, ?, ?, 0)";
 
         try (Connection conexion = ConexionBD.conectar()) {
             conexion.setAutoCommit(false);
@@ -60,13 +60,14 @@ public class PrestamoDAO {
                     ps.setString(1, prestamo.getFolio());
                     ps.setInt(2, prestamo.getIdMaterial());
                     ps.setInt(3, prestamo.getIdUsuario());
-                    ps.setDate(4, Date.valueOf(prestamo.getFechaPrestamo()));
-                    ps.setDate(5, Date.valueOf(prestamo.getFechaDevolucion()));
-                    ps.setString(6, prestamo.getObservaciones());
+                    ps.setInt(4, prestamo.getCantidad());
+                    ps.setDate(5, Date.valueOf(prestamo.getFechaPrestamo()));
+                    ps.setDate(6, Date.valueOf(prestamo.getFechaDevolucion()));
+                    ps.setString(7, prestamo.getObservaciones());
                     ps.executeUpdate();
                 }
 
-                materialDAO.ajustarDisponibleEnTransaccion(conexion, prestamo.getIdMaterial(), -1);
+                materialDAO.ajustarDisponibleEnTransaccion(conexion, prestamo.getIdMaterial(), -prestamo.getCantidad());
 
                 conexion.commit();
             } catch (SQLException e) {
@@ -77,19 +78,21 @@ public class PrestamoDAO {
     }
 
     public void registrarDevolucion(int idPrestamo) throws SQLException {
-        String sqlSelect = "SELECT idMaterial, devuelto FROM dbo.Prestamos WHERE idPrestamo = ?";
+        String sqlSelect = "SELECT idMaterial, cantidad, devuelto FROM dbo.Prestamos WHERE idPrestamo = ?";
         String sqlUpdate = "UPDATE dbo.Prestamos SET devuelto = 1 WHERE idPrestamo = ?";
 
         try (Connection conexion = ConexionBD.conectar()) {
             conexion.setAutoCommit(false);
             try {
                 int idMaterial;
+                int cantidad;
                 boolean yaDevuelto;
                 try (PreparedStatement ps = conexion.prepareStatement(sqlSelect)) {
                     ps.setInt(1, idPrestamo);
                     try (ResultSet rs = ps.executeQuery()) {
                         if (!rs.next()) throw new SQLException("El préstamo ya no existe.");
                         idMaterial = rs.getInt("idMaterial");
+                        cantidad = rs.getInt("cantidad");
                         yaDevuelto = rs.getBoolean("devuelto");
                     }
                 }
@@ -99,7 +102,7 @@ public class PrestamoDAO {
                         ps.setInt(1, idPrestamo);
                         ps.executeUpdate();
                     }
-                    materialDAO.ajustarDisponibleEnTransaccion(conexion, idMaterial, 1);
+                    materialDAO.ajustarDisponibleEnTransaccion(conexion, idMaterial, cantidad);
                 }
 
                 conexion.commit();
@@ -111,19 +114,21 @@ public class PrestamoDAO {
     }
 
     public void eliminar(int idPrestamo) throws SQLException {
-        String sqlSelect = "SELECT idMaterial, devuelto FROM dbo.Prestamos WHERE idPrestamo = ?";
+        String sqlSelect = "SELECT idMaterial, cantidad, devuelto FROM dbo.Prestamos WHERE idPrestamo = ?";
         String sqlDelete = "DELETE FROM dbo.Prestamos WHERE idPrestamo = ?";
 
         try (Connection conexion = ConexionBD.conectar()) {
             conexion.setAutoCommit(false);
             try {
                 int idMaterial;
+                int cantidad;
                 boolean yaDevuelto;
                 try (PreparedStatement ps = conexion.prepareStatement(sqlSelect)) {
                     ps.setInt(1, idPrestamo);
                     try (ResultSet rs = ps.executeQuery()) {
                         if (!rs.next()) throw new SQLException("El préstamo ya no existe.");
                         idMaterial = rs.getInt("idMaterial");
+                        cantidad = rs.getInt("cantidad");
                         yaDevuelto = rs.getBoolean("devuelto");
                     }
                 }
@@ -134,7 +139,7 @@ public class PrestamoDAO {
                 }
 
                 if (!yaDevuelto) {
-                    materialDAO.ajustarDisponibleEnTransaccion(conexion, idMaterial, 1);
+                    materialDAO.ajustarDisponibleEnTransaccion(conexion, idMaterial, cantidad);
                 }
 
                 conexion.commit();
@@ -153,6 +158,7 @@ public class PrestamoDAO {
         prestamo.setMaterialNombre(rs.getString("materialNombre"));
         prestamo.setIdUsuario(rs.getInt("idUsuario"));
         prestamo.setUsuarioNombre(rs.getString("usuarioNombre"));
+        prestamo.setCantidad(rs.getInt("cantidad"));
         prestamo.setFechaPrestamo(rs.getDate("fechaPrestamo").toLocalDate());
         prestamo.setFechaDevolucion(rs.getDate("fechaDevolucion").toLocalDate());
         prestamo.setObservaciones(rs.getString("observaciones"));

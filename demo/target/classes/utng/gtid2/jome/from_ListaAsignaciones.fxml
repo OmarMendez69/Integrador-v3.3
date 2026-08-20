@@ -43,13 +43,14 @@
         <VBox style="-fx-padding: 20 24 0 24; -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #b721ff 0%, #21d4fd 100%);" VBox.vgrow="ALWAYS">
             <TableView fx:id="tablaAsignaciones" style="-fx-background-color: #FFFFFF; -fx-border-color: #DDE3EA; -fx-border-radius: 6; -fx-background-radius: 6;" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colFolio" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Folio" />
-                    <TableColumn fx:id="colInsumo" prefWidth="140.0" text="Insumo Prestado" />
-                    <TableColumn fx:id="colTecnico" prefWidth="140.0" text="Responsable / Técnico" />
-                    <TableColumn fx:id="colFechaPrestamo" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Fecha Préstamo" />
-                    <TableColumn fx:id="colFechaDevolucion" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Fecha Devolución" />
-                    <TableColumn fx:id="colEstado" prefWidth="80.0" style="-fx-alignment: CENTER;" text="Estado" />
-                    <TableColumn fx:id="colObservaciones" prefWidth="130.0" text="Observaciones" />
+                    <TableColumn fx:id="colFolio" prefWidth="65.0" style="-fx-alignment: CENTER;" text="Folio" />
+                    <TableColumn fx:id="colInsumo" prefWidth="130.0" text="Insumo Prestado" />
+                    <TableColumn fx:id="colCantidad" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Cantidad" />
+                    <TableColumn fx:id="colTecnico" prefWidth="130.0" text="Responsable / Técnico" />
+                    <TableColumn fx:id="colFechaPrestamo" prefWidth="95.0" style="-fx-alignment: CENTER;" text="Fecha Préstamo" />
+                    <TableColumn fx:id="colFechaDevolucion" prefWidth="95.0" style="-fx-alignment: CENTER;" text="Fecha Devolución" />
+                    <TableColumn fx:id="colEstado" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Estado" />
+                    <TableColumn fx:id="colObservaciones" prefWidth="120.0" text="Observaciones" />
                     <TableColumn fx:id="colAccion" prefWidth="140.0" style="-fx-alignment: CENTER;" text="Acción" />
                 </columns>
                 <placeholder>

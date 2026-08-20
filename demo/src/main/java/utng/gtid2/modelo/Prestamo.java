@@ -13,6 +13,7 @@ public class Prestamo {
     private String materialNombre;
     private int idUsuario;
     private String usuarioNombre;
+    private int cantidad;
     private LocalDate fechaPrestamo;
     private LocalDate fechaDevolucion;
     private String observaciones;
@@ -38,6 +39,9 @@ public class Prestamo {
 
     public String getUsuarioNombre() { return usuarioNombre; }
     public void setUsuarioNombre(String usuarioNombre) { this.usuarioNombre = usuarioNombre; }
+
+    public int getCantidad() { return cantidad; }
+    public void setCantidad(int cantidad) { this.cantidad = cantidad; }
 
     public LocalDate getFechaPrestamo() { return fechaPrestamo; }
     public void setFechaPrestamo(LocalDate fechaPrestamo) { this.fechaPrestamo = fechaPrestamo; }
