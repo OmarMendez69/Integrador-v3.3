@@ -198,7 +198,7 @@ public class PrimaryController {
 
     @FXML
     private void irAPrestamo() throws IOException {
-        cambiarPantalla("from_ListaAsignaciones.fxml", "Prestamo");
+        cambiarPantalla("from_Prestamo.fxml", "Prestamo");
     }
 
     @FXML
