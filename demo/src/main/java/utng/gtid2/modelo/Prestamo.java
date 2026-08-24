@@ -3,12 +3,24 @@ package utng.gtid2.modelo;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Representa un préstamo de material técnico realizado a un usuario.
+ * <p>
+ * A diferencia de un POJO simple, esta clase resuelve por sí misma su
+ * propio estado ({@link #getEstadoTexto()}): en vez de depender de una
+ * columna guardada en la base de datos, compara la fecha de devolución
+ * contra la fecha actual del sistema cada vez que se consulta, así el
+ * dato siempre está actualizado sin intervención manual.
+ */
 public class Prestamo {
 
     private static final DateTimeFormatter FORMATO = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private int idPrestamo;
+
+    /** Folio autogenerado del préstamo, formato F001, F002... */
     private String folio;
+
     private int idMaterial;
     private String materialNombre;
     private int idUsuario;
@@ -17,6 +29,8 @@ public class Prestamo {
     private LocalDate fechaPrestamo;
     private LocalDate fechaDevolucion;
     private String observaciones;
+
+    /** Indica si el préstamo ya fue devuelto físicamente. */
     private boolean devuelto;
 
     public Prestamo() {
@@ -55,16 +69,30 @@ public class Prestamo {
     public boolean isDevuelto() { return devuelto; }
     public void setDevuelto(boolean devuelto) { this.devuelto = devuelto; }
 
-    // Para mostrar en la tabla (dd/MM/yyyy en vez de yyyy-MM-dd)
+    /**
+     * Formatea la fecha de préstamo como dd/MM/yyyy, para mostrarla en
+     * las tablas de la interfaz en lugar del formato ISO de la base.
+     */
     public String getFechaPrestamoTexto() {
         return fechaPrestamo == null ? "" : fechaPrestamo.format(FORMATO);
     }
 
+    /**
+     * Formatea la fecha de devolución como dd/MM/yyyy, para mostrarla en
+     * las tablas de la interfaz en lugar del formato ISO de la base.
+     */
     public String getFechaDevolucionTexto() {
         return fechaDevolucion == null ? "" : fechaDevolucion.format(FORMATO);
     }
 
-    // Estado derivado: no se guarda en BD, se calcula al vuelo
+    /**
+     * Calcula el estado del préstamo comparando sus propios datos contra
+     * la fecha del sistema. No se guarda en la base de datos.
+     *
+     * @return "Devuelto" si ya fue devuelto, "Vencido" si la fecha de
+     *         devolución ya pasó sin devolverse, o "Activo" en cualquier
+     *         otro caso
+     */
     public String getEstadoTexto() {
         if (devuelto) return "Devuelto";
         if (fechaDevolucion != null && fechaDevolucion.isBefore(LocalDate.now())) return "Vencido";

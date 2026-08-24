@@ -11,10 +11,24 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Acceso a datos para la entidad {@link Prestamo}. Además del CRUD
+ * básico, coordina con {@link MaterialDAO} para mantener sincronizado
+ * el stock disponible del material cada vez que se presta, se devuelve
+ * o se elimina un préstamo, siempre dentro de una transacción.
+ */
 public class PrestamoDAO {
 
     private final MaterialDAO materialDAO = new MaterialDAO();
 
+    /**
+     * Obtiene todos los préstamos registrados, con el nombre del material
+     * y del usuario responsable ya resueltos mediante JOIN, ordenados por
+     * fecha de préstamo descendente.
+     *
+     * @return lista de préstamos registrados
+     * @throws SQLException si ocurre un error al consultar la base de datos
+     */
     public List<Prestamo> listarTodos() throws SQLException {
         String sql = "SELECT p.idPrestamo, p.folio, p.idMaterial, m.nombre AS materialNombre, "
                 + "p.idUsuario, u.nombre AS usuarioNombre, p.cantidad, p.fechaPrestamo, p.fechaDevolucion, "
@@ -36,6 +50,13 @@ public class PrestamoDAO {
         return prestamos;
     }
 
+    /**
+     * Calcula el siguiente folio disponible para un nuevo préstamo,
+     * tomando el máximo id de préstamo registrado y sumándole uno.
+     *
+     * @return folio autogenerado con formato "F" + tres dígitos (ej. F001)
+     * @throws SQLException si ocurre un error al consultar la base de datos
+     */
     public String generarSiguienteFolio() throws SQLException {
         String sql = "SELECT ISNULL(MAX(idPrestamo), 0) + 1 AS siguiente FROM dbo.Prestamos";
 
@@ -49,6 +70,19 @@ public class PrestamoDAO {
         }
     }
 
+    /**
+     * Registra un nuevo préstamo y descuenta la cantidad prestada del
+     * disponible del material, dentro de una sola transacción.
+     * <p>
+     * Si el ajuste de stock falla (por ejemplo, porque ya no hay
+     * suficiente disponible), se revierte también la inserción del
+     * préstamo mediante rollback, evitando dejar el inventario
+     * inconsistente.
+     *
+     * @param prestamo préstamo a registrar; su cantidad se descuenta del
+     *                 disponible del material asociado
+     * @throws SQLException si falla la inserción o el ajuste de stock
+     */
     public void registrarPrestamo(Prestamo prestamo) throws SQLException {
         String sql = "INSERT INTO dbo.Prestamos (folio, idMaterial, idUsuario, cantidad, fechaPrestamo, "
                 + "fechaDevolucion, observaciones, devuelto) VALUES (?, ?, ?, ?, ?, ?, ?, 0)";
@@ -77,6 +111,17 @@ public class PrestamoDAO {
         }
     }
 
+    /**
+     * Marca un préstamo como devuelto y repone la cantidad prestada al
+     * disponible del material, dentro de una transacción.
+     * <p>
+     * Si el préstamo ya estaba marcado como devuelto, no hace nada
+     * adicional (evita devolver el mismo préstamo dos veces y duplicar
+     * el stock repuesto).
+     *
+     * @param idPrestamo identificador del préstamo a marcar como devuelto
+     * @throws SQLException si el préstamo no existe o falla el ajuste de stock
+     */
     public void registrarDevolucion(int idPrestamo) throws SQLException {
         String sqlSelect = "SELECT idMaterial, cantidad, devuelto FROM dbo.Prestamos WHERE idPrestamo = ?";
         String sqlUpdate = "UPDATE dbo.Prestamos SET devuelto = 1 WHERE idPrestamo = ?";
@@ -113,6 +158,14 @@ public class PrestamoDAO {
         }
     }
 
+    /**
+     * Elimina un préstamo del historial. Si el préstamo no había sido
+     * devuelto todavía, repone su cantidad al disponible del material
+     * antes de borrarlo, dentro de la misma transacción.
+     *
+     * @param idPrestamo identificador del préstamo a eliminar
+     * @throws SQLException si el préstamo no existe o falla el ajuste de stock
+     */
     public void eliminar(int idPrestamo) throws SQLException {
         String sqlSelect = "SELECT idMaterial, cantidad, devuelto FROM dbo.Prestamos WHERE idPrestamo = ?";
         String sqlDelete = "DELETE FROM dbo.Prestamos WHERE idPrestamo = ?";
@@ -150,6 +203,14 @@ public class PrestamoDAO {
         }
     }
 
+    /**
+     * Convierte la fila actual de un {@link ResultSet} en un objeto
+     * {@link Prestamo}.
+     *
+     * @param rs resultado posicionado en la fila a mapear
+     * @return el {@link Prestamo} construido a partir de la fila
+     * @throws SQLException si ocurre un error al leer alguna columna
+     */
     private Prestamo mapear(ResultSet rs) throws SQLException {
         Prestamo prestamo = new Prestamo();
         prestamo.setIdPrestamo(rs.getInt("idPrestamo"));

@@ -3,16 +3,30 @@ package utng.gtid2.modelo;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Representa la baja parcial de un material por daño o inutilización.
+ * <p>
+ * A diferencia de eliminar un material completo del catálogo, un
+ * {@code Desecho} documenta cuánta cantidad se perdió, cuándo, por qué
+ * motivo y bajo la responsabilidad de qué usuario, dejando trazabilidad
+ * del movimiento en el inventario.
+ */
 public class Desecho {
 
     private static final DateTimeFormatter FORMATO = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private int idDesecho;
+
+    /** Folio autogenerado del desecho, formato DS-0001, DS-0002... */
     private String folio;
+
     private int idMaterial;
     private String materialNombre;
     private int cantidad;
+
+    /** Peso total del material desechado, usado en el resumen del dashboard. */
     private double peso;
+
     private String motivo;
     private LocalDate fecha;
     private int idUsuario;
@@ -55,6 +69,10 @@ public class Desecho {
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
+    /**
+     * Formatea la fecha del desecho como dd/MM/yyyy, para mostrarla en
+     * las tablas de la interfaz en lugar del formato ISO de la base.
+     */
     public String getFechaTexto() {
         return fecha == null ? "" : fecha.format(FORMATO);
     }

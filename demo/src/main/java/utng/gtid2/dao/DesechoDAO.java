@@ -12,8 +12,23 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Acceso a datos para la entidad {@link Desecho}: bajas parciales de
+ * material por daño. A diferencia de eliminar un material completo del
+ * catálogo, este DAO descuenta tanto el total como el disponible del
+ * material afectado, ya que la cantidad desechada deja de existir
+ * físicamente en el inventario.
+ */
 public class DesechoDAO {
 
+    /**
+     * Obtiene todos los registros de desecho, con el nombre del material
+     * y del usuario responsable resueltos mediante JOIN, ordenados por
+     * fecha descendente.
+     *
+     * @return lista de registros de desecho
+     * @throws SQLException si ocurre un error al consultar la base de datos
+     */
     public List<Desecho> listarTodos() throws SQLException {
         String sql = "SELECT d.idDesecho, d.folio, d.idMaterial, m.nombre AS materialNombre, "
                 + "d.cantidad, d.peso, d.motivo, d.fecha, d.idUsuario, u.nombre AS usuarioNombre, d.descripcion "
@@ -33,6 +48,13 @@ public class DesechoDAO {
         return lista;
     }
 
+    /**
+     * Calcula el siguiente folio disponible para un nuevo desecho,
+     * tomando el máximo id de desecho registrado y sumándole uno.
+     *
+     * @return folio autogenerado con formato "DS-" + cuatro dígitos (ej. DS-0001)
+     * @throws SQLException si ocurre un error al consultar la base de datos
+     */
     public String generarSiguienteFolio() throws SQLException {
         String sql = "SELECT ISNULL(MAX(idDesecho), 0) + 1 AS siguiente FROM dbo.Desechos";
         try (Connection conexion = ConexionBD.conectar();
@@ -44,6 +66,14 @@ public class DesechoDAO {
         }
     }
 
+    /**
+     * Registra un nuevo desecho y descuenta la cantidad dañada del
+     * material afectado (total y disponible), dentro de una transacción.
+     * Si el ajuste de stock falla, se revierte también la inserción.
+     *
+     * @param desecho registro de desecho a insertar
+     * @throws SQLException si falla la inserción o el ajuste de stock
+     */
     public void registrar(Desecho desecho) throws SQLException {
         String sqlInsert = "INSERT INTO dbo.Desechos (folio, idMaterial, cantidad, peso, motivo, fecha, idUsuario, descripcion) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -73,6 +103,17 @@ public class DesechoDAO {
         }
     }
 
+    /**
+     * Actualiza los datos editables de un desecho ya registrado (motivo,
+     * fecha y descripción). No permite cambiar el material ni la
+     * cantidad, para no descuadrar el stock ya ajustado.
+     *
+     * @param idDesecho   identificador del desecho a actualizar
+     * @param motivo      nuevo motivo del desecho
+     * @param fecha       nueva fecha del desecho
+     * @param descripcion nueva descripción del desecho
+     * @throws SQLException si ocurre un error al actualizar en la base de datos
+     */
     public void actualizar(int idDesecho, String motivo, LocalDate fecha, String descripcion) throws SQLException {
         String sql = "UPDATE dbo.Desechos SET motivo = ?, fecha = ?, descripcion = ? WHERE idDesecho = ?";
         try (Connection conexion = ConexionBD.conectar();
@@ -85,6 +126,13 @@ public class DesechoDAO {
         }
     }
 
+    /**
+     * Elimina un registro de desecho y repone la cantidad correspondiente
+     * al material afectado (total y disponible), dentro de una transacción.
+     *
+     * @param idDesecho identificador del desecho a eliminar
+     * @throws SQLException si el registro no existe o falla el ajuste de stock
+     */
     public void eliminar(int idDesecho) throws SQLException {
         String sqlSelect = "SELECT idMaterial, cantidad FROM dbo.Desechos WHERE idDesecho = ?";
         String sqlDelete = "DELETE FROM dbo.Desechos WHERE idDesecho = ?";
@@ -121,6 +169,12 @@ public class DesechoDAO {
     /**
      * delta negativo = se desecha (resta total y disponible)
      * delta positivo = se elimina el registro de desecho (repone total y disponible)
+     *
+     * @param conexion   conexión con la transacción ya iniciada
+     * @param idMaterial identificador del material a ajustar
+     * @param delta      cantidad a aplicar al total y al disponible
+     * @throws SQLException si el material no existe o si el ajuste
+     *                       dejaría el total o el disponible en negativo
      */
     private void ajustarStockPorDesecho(Connection conexion, int idMaterial, int delta) throws SQLException {
         String sqlSelect = "SELECT cantidadTotal, cantidadDisponible FROM dbo.Materiales WHERE idMaterial = ?";
@@ -155,6 +209,14 @@ public class DesechoDAO {
         }
     }
 
+    /**
+     * Convierte la fila actual de un {@link ResultSet} en un objeto
+     * {@link Desecho}.
+     *
+     * @param rs resultado posicionado en la fila a mapear
+     * @return el {@link Desecho} construido a partir de la fila
+     * @throws SQLException si ocurre un error al leer alguna columna
+     */
     private Desecho mapear(ResultSet rs) throws SQLException {
         Desecho d = new Desecho();
         d.setIdDesecho(rs.getInt("idDesecho"));

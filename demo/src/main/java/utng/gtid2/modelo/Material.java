@@ -1,5 +1,13 @@
 package utng.gtid2.modelo;
 
+/**
+ * Representa un material o insumo del inventario técnico de CGTI.
+ * <p>
+ * Es un POJO: solo encapsula el estado de un material mediante getters
+ * y setters. No contiene lógica de acceso a datos ni de negocio; el
+ * cálculo del estado (Disponible/Crítico) y su persistencia se manejan
+ * en {@code utng.gtid2.dao.MaterialDAO}.
+ */
 public class Material {
 
     private int idMaterial;
@@ -9,11 +17,23 @@ public class Material {
     private int cantidadDisponible;
     private String ubicacion;
     private double costoUnitario;
+
+    /** Estado calculado del stock: "Disponible" o "Crítico". */
     private String estado;
 
     public Material() {
     }
 
+    /**
+     * @param idMaterial         identificador único del material
+     * @param nombre             nombre descriptivo del material
+     * @param categoria          categoría del material
+     * @param cantidadTotal      cantidad total registrada
+     * @param cantidadDisponible cantidad actualmente disponible
+     * @param ubicacion          ubicación física del material
+     * @param costoUnitario      costo unitario del material
+     * @param estado             estado del stock ("Disponible" o "Crítico")
+     */
     public Material(int idMaterial, String nombre, String categoria, int cantidadTotal,
                      int cantidadDisponible, String ubicacion, double costoUnitario, String estado) {
         this.idMaterial = idMaterial;
