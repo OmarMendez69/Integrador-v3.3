@@ -17,6 +17,15 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Controlador del panel principal (dashboard) de la aplicación.
+ * <p>
+ * Muestra el resumen general del sistema (materiales, críticos, técnicos
+ * activos y desecho del mes), la lista de insumos en estado crítico y la
+ * actividad reciente. También funciona como menú de navegación hacia las
+ * demás pantallas, aplicando restricciones de visibilidad según el rol
+ * del usuario en sesión.
+ */
 public class PrimaryController {
 
     @FXML private Label lblTitulo;
@@ -38,6 +47,11 @@ public class PrimaryController {
     @FXML private Button btnProveedores;
     @FXML private Button btnReportes;
 
+    /**
+     * Inicializa la pantalla: muestra el nombre y rol del usuario en
+     * sesión, aplica las restricciones de menú por rol y carga los
+     * datos del dashboard. Se invoca automáticamente al cargar el FXML.
+     */
     @FXML
     public void initialize() {
         if (Sesion.estaActiva()) {
@@ -48,6 +62,11 @@ public class PrimaryController {
         cargarDashboard();
     }
 
+    /**
+     * Establece el nombre de usuario mostrado en el saludo de bienvenida.
+     *
+     * @param nombreUsuario nombre del usuario a mostrar
+     */
     public void setUsuario(String nombreUsuario) {
         lblId.setText("Bienvenido, " + nombreUsuario);
         if (Sesion.estaActiva()) {
@@ -55,6 +74,12 @@ public class PrimaryController {
         }
     }
 
+    /**
+     * Oculta los botones del menú a los que el usuario en sesión no tiene
+     * acceso según su rol: los usuarios de tipo "Usuario" solo ven el
+     * catálogo, mientras que los "Técnico" no ven usuarios, proveedores
+     * ni reportes.
+     */
     private void aplicarRestriccionesPorRol() {
         if (Sesion.isUsuario()) {
             btnAsignaciones.setVisible(false);
@@ -78,6 +103,11 @@ public class PrimaryController {
         }
     }
 
+    /**
+     * Consulta los indicadores del dashboard (totales, críticos, técnicos
+     * activos, desecho del mes), la lista de insumos críticos y la
+     * actividad reciente, y actualiza la interfaz con esos datos.
+     */
     private void cargarDashboard() {
         try {
             DashboardDAO dao = new DashboardDAO();
@@ -151,6 +181,17 @@ public class PrimaryController {
         }
     }
 
+    /**
+     * Crea una fila con dos etiquetas (texto a la izquierda y a la
+     * derecha) usada tanto en la lista de críticos como en la de
+     * actividad reciente.
+     *
+     * @param izquierda texto a mostrar en la parte izquierda de la fila
+     * @param derecha   texto a mostrar en la parte derecha de la fila
+     * @param indice    índice de la fila, usado para alternar el color de fondo
+     * @param esCritico si es {@code true}, resalta el texto derecho en rojo
+     * @return el {@link HBox} construido con la fila
+     */
     private HBox crearFila(String izquierda, String derecha, int indice, boolean esCritico) {
         HBox fila = new HBox();
         String bg = indice % 2 != 0 ? "-fx-background-color: #F9FAFB;" : "";
@@ -169,49 +210,97 @@ public class PrimaryController {
         return fila;
     }
 
+    /** Refresca el dashboard con los datos más recientes. */
     @FXML private void irAInicio() { cargarDashboard(); }
 
+    /**
+     * Navega a la pantalla de Catálogo de Insumos.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void irACatalogo() throws IOException {
         cambiarPantalla("from_Catalogo.fxml", "Catalogo de Insumos");
     }
 
+    /**
+     * Navega a la pantalla de Asignaciones.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void irAAsignaciones() throws IOException {
         cambiarPantalla("from_ListaAsignaciones.fxml", "Asignaciones");
     }
 
+    /**
+     * Navega a la pantalla de Registro de Desecho.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void irADesecho() throws IOException {
         cambiarPantalla("from_ListaDesecho.fxml", "Registro de Desecho");
     }
 
+    /**
+     * Navega a la pantalla de Usuarios.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void irAUsuarios() throws IOException {
         cambiarPantalla("from_ListaUsuarios.fxml", "Usuarios");
     }
 
+    /**
+     * Navega a la pantalla de Proveedores.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void irAProveedores() throws IOException {
         cambiarPantalla("from_ListaProveedores.fxml", "Proveedores");
     }
 
+    /**
+     * Navega a la pantalla de Préstamo.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void irAPrestamo() throws IOException {
         cambiarPantalla("from_Prestamo.fxml", "Prestamo");
     }
 
+    /**
+     * Navega a la pantalla de Reportes.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void irAReportes() throws IOException {
         cambiarPantalla("from_Reportes.fxml", "Reportes");
     }
 
+    /**
+     * Cierra la sesión actual y regresa a la pantalla de Login.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void cerrarSesion() throws IOException {
         Sesion.cerrar();
         cambiarPantalla("Pantalla_Login.fxml", "Login");
     }
 
+    /**
+     * Reemplaza la escena actual por la indicada por el FXML dado.
+     *
+     * @param nombreFxml    nombre del archivo FXML a cargar
+     * @param tituloVentana título que se asignará a la ventana (Stage)
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     private void cambiarPantalla(String nombreFxml, String tituloVentana) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(nombreFxml));
         Parent root = loader.load();

@@ -15,6 +15,12 @@ import utng.gtid2.dao.MaterialDAO;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * Controlador de la pantalla de baja definitiva de un material del
+ * catálogo. A diferencia del registro de desecho, aquí se elimina por
+ * completo el material de la base de datos, previa confirmación del
+ * usuario mediante una alerta.
+ */
 public class BajaInsumoController {
 
     @FXML private TextField txtCodigo;
@@ -25,6 +31,14 @@ public class BajaInsumoController {
     private final MaterialDAO materialDAO = new MaterialDAO();
     private int idMaterial;
 
+    /**
+     * Precarga el formulario con los datos del material que se va a dar
+     * de baja.
+     *
+     * @param idMaterial identificador del material a eliminar
+     * @param nombre     nombre del material
+     * @param categoria  categoría del material
+     */
     public void cargarProducto(int idMaterial, String nombre, String categoria) {
         this.idMaterial = idMaterial;
         txtCodigo.setText(String.valueOf(idMaterial));
@@ -32,6 +46,11 @@ public class BajaInsumoController {
         txtCategoria.setText(categoria);
     }
 
+    /**
+     * Pide confirmación al usuario y, si acepta, elimina el material de
+     * forma permanente mediante {@link MaterialDAO#eliminar(int)} y
+     * regresa al catálogo.
+     */
     @FXML
     private void eliminarDefinitivamente() {
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION,
@@ -53,12 +72,18 @@ public class BajaInsumoController {
         });
     }
 
+    /**
+     * Muestra una alerta de error con el mensaje indicado.
+     *
+     * @param mensaje texto a mostrar en la alerta
+     */
     private void mostrarError(String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.ERROR, mensaje, ButtonType.OK);
         alerta.setHeaderText(null);
         alerta.showAndWait();
     }
 
+    /** Limpia todos los campos del formulario. */
     @FXML
     private void accionCancelar() {
         txtCodigo.clear();
@@ -66,6 +91,11 @@ public class BajaInsumoController {
         txtCategoria.clear();
     }
 
+    /**
+     * Regresa al catálogo de insumos, reemplazando la escena actual.
+     *
+     * @throws IOException si no se puede cargar el archivo FXML del catálogo
+     */
     @FXML
     private void accionVolver() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("from_Catalogo.fxml"));

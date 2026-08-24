@@ -14,6 +14,12 @@ import utng.gtid2.modelo.Usuario;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * Controlador de la pantalla de inicio de sesión. Verifica las
+ * credenciales contra la base de datos mediante {@link UsuarioDAO},
+ * abre el panel principal si son correctas y da acceso a la pantalla
+ * de registro de usuario nuevo.
+ */
 public class LoginController {
 
     @FXML
@@ -25,6 +31,13 @@ public class LoginController {
     @FXML
     private Label lblMensaje;
 
+    /**
+     * Valida los campos del formulario, verifica las credenciales contra
+     * la base de datos y, si son correctas, inicia sesión y navega al
+     * panel principal. Muestra un mensaje de error en pantalla si los
+     * campos están vacíos, las credenciales son incorrectas o falla la
+     * conexión.
+     */
     @FXML
     private void accionLogin() {
         String username = txtUsername.getText().trim();
@@ -73,6 +86,10 @@ public class LoginController {
         }
     }
 
+    /**
+     * Abre la pantalla de registro de usuario nuevo, reemplazando la
+     * escena actual.
+     */
     @FXML
     private void accionRegistrar() {
         try {

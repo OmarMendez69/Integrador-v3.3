@@ -16,6 +16,12 @@ import utng.gtid2.modelo.Usuario;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * Controlador de la pantalla de lista de Usuarios.
+ * <p>
+ * Muestra la tabla de usuarios registrados en el sistema y da acceso
+ * a las acciones de agregar, editar y eliminar usuarios.
+ */
 public class ListaUsuariosController {
 
     @FXML private TableView<Usuario> tablaUsuarios;
@@ -28,6 +34,10 @@ public class ListaUsuariosController {
 
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
+    /**
+     * Inicializa las columnas de la tabla y carga la lista de usuarios.
+     * Se invoca automáticamente al cargar el FXML.
+     */
     @FXML
     public void initialize() {
         colId.setCellValueFactory(new PropertyValueFactory<>("idUsuario"));
@@ -38,6 +48,10 @@ public class ListaUsuariosController {
         cargarDatos();
     }
 
+    /**
+     * Carga desde la base de datos todos los usuarios registrados
+     * y los muestra en la tabla.
+     */
     private void cargarDatos() {
         try {
             ObservableList<Usuario> usuarios = FXCollections.observableArrayList(usuarioDAO.listarTodos());
@@ -47,6 +61,11 @@ public class ListaUsuariosController {
         }
     }
 
+    /**
+     * Abre la pantalla para registrar un nuevo usuario.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void accionAgregar() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("from_AgregarUsuario.fxml"));
@@ -58,6 +77,12 @@ public class ListaUsuariosController {
         stage.show();
     }
 
+    /**
+     * Abre la pantalla de edición precargada con el usuario seleccionado
+     * en la tabla. Muestra un error si no hay ninguno seleccionado.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void accionEditar() throws IOException {
         Usuario seleccionado = tablaUsuarios.getSelectionModel().getSelectedItem();
@@ -78,6 +103,10 @@ public class ListaUsuariosController {
         stage.show();
     }
 
+    /**
+     * Solicita confirmación y, si se acepta, elimina el usuario
+     * seleccionado en la tabla.
+     */
     @FXML
     private void accionEliminar() {
         Usuario seleccionado = tablaUsuarios.getSelectionModel().getSelectedItem();
@@ -103,6 +132,11 @@ public class ListaUsuariosController {
         });
     }
 
+    /**
+     * Regresa a la pantalla del panel principal.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void accionVolver() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Principal.fxml"));
@@ -114,6 +148,11 @@ public class ListaUsuariosController {
         stage.show();
     }
 
+    /**
+     * Muestra una alerta de advertencia con el mensaje indicado.
+     *
+     * @param mensaje texto a mostrar en la alerta
+     */
     private void mostrarError(String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.WARNING, mensaje, ButtonType.OK);
         alerta.setHeaderText(null);

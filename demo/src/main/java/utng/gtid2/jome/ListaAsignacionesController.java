@@ -19,6 +19,14 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador de la pantalla de Asignaciones (préstamos de insumos).
+ * <p>
+ * Muestra el historial de préstamos con su estado, permite buscar por
+ * folio/insumo/técnico, registrar devoluciones y eliminar préstamos.
+ * También aplica restricciones de la columna de acciones y del botón
+ * de registro según el rol del usuario en sesión.
+ */
 public class ListaAsignacionesController {
 
     @FXML private Button btnVolver;
@@ -43,6 +51,11 @@ public class ListaAsignacionesController {
     private final PrestamoDAO prestamoDAO = new PrestamoDAO();
     private final ObservableList<Prestamo> listaCompleta = FXCollections.observableArrayList();
 
+    /**
+     * Inicializa las columnas de la tabla, la columna de acciones, los
+     * listeners de búsqueda, las restricciones por rol y carga los datos.
+     * Se invoca automáticamente al cargar el FXML.
+     */
     @FXML
     public void initialize() {
         colFolio.setCellValueFactory(new PropertyValueFactory<>("folio"));
@@ -67,6 +80,10 @@ public class ListaAsignacionesController {
         cargarDatos();
     }
 
+    /**
+     * Oculta el botón de registrar préstamo y la columna de acciones
+     * cuando el usuario en sesión tiene rol "Usuario".
+     */
     private void aplicarRestriccionesPorRol() {
         if (Sesion.isUsuario()) {
             btnRegistrarPrestamo.setVisible(false);
@@ -75,6 +92,10 @@ public class ListaAsignacionesController {
         }
     }
 
+    /**
+     * Configura la columna de acciones con los botones de "Registrar
+     * Devolución" y "Eliminar" para cada fila de la tabla.
+     */
     private void configurarColumnaAccion() {
         colAccion.setCellFactory(col -> new TableCell<Prestamo, Void>() {
             private final Button btnDevolver = new Button("Registrar Devolución");
@@ -110,6 +131,10 @@ public class ListaAsignacionesController {
         });
     }
 
+    /**
+     * Carga desde la base de datos todos los préstamos registrados
+     * y aplica el filtro de búsqueda actual.
+     */
     private void cargarDatos() {
         try {
             listaCompleta.setAll(prestamoDAO.listarTodos());
@@ -119,6 +144,10 @@ public class ListaAsignacionesController {
         }
     }
 
+    /**
+     * Filtra la lista completa de préstamos según el texto de búsqueda
+     * (folio, insumo o técnico) y actualiza la tabla y los contadores.
+     */
     private void aplicarFiltro() {
         String texto = txtBuscar.getText() == null ? "" : txtBuscar.getText().trim().toLowerCase();
 
@@ -133,6 +162,10 @@ public class ListaAsignacionesController {
         actualizarContadores();
     }
 
+    /**
+     * Recalcula y muestra los contadores de préstamos totales, activos,
+     * vencidos y devueltos.
+     */
     private void actualizarContadores() {
         int total = listaCompleta.size();
         long activos = listaCompleta.stream().filter(p -> "Activo".equals(p.getEstadoTexto())).count();
@@ -145,6 +178,11 @@ public class ListaAsignacionesController {
         lblDevueltos.setText("Devueltos: " + devueltos);
     }
 
+    /**
+     * Registra la devolución del préstamo indicado y refresca la tabla.
+     *
+     * @param prestamo préstamo a marcar como devuelto
+     */
     private void registrarDevolucion(Prestamo prestamo) {
         try {
             prestamoDAO.registrarDevolucion(prestamo.getIdPrestamo());
@@ -154,6 +192,12 @@ public class ListaAsignacionesController {
         }
     }
 
+    /**
+     * Solicita confirmación y, si se acepta, elimina el préstamo indicado
+     * y refresca la tabla.
+     *
+     * @param prestamo préstamo a eliminar
+     */
     private void eliminarPrestamo(Prestamo prestamo) {
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION,
                 "¿Eliminar el préstamo con folio \"" + prestamo.getFolio() + "\"?",
@@ -172,6 +216,11 @@ public class ListaAsignacionesController {
         });
     }
 
+    /**
+     * Regresa a la pantalla del panel principal.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void accionVolver() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Principal.fxml"));
@@ -183,6 +232,11 @@ public class ListaAsignacionesController {
         stage.show();
     }
 
+    /**
+     * Abre la pantalla de registro de un nuevo préstamo.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void accionAbrirPrestamo() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("from_Prestamo.fxml"));
@@ -194,6 +248,11 @@ public class ListaAsignacionesController {
         stage.show();
     }
 
+    /**
+     * Muestra una alerta de advertencia con el mensaje indicado.
+     *
+     * @param mensaje texto a mostrar en la alerta
+     */
     private void mostrarError(String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.WARNING, mensaje, ButtonType.OK);
         alerta.setHeaderText(null);

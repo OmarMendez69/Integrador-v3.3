@@ -19,6 +19,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador de la pantalla de Catálogo de Insumos.
+ * <p>
+ * Muestra la tabla de materiales registrados, permite buscar y filtrar
+ * por categoría/estado, y da acceso a las acciones de agregar, actualizar,
+ * eliminar y reabastecer materiales. Además aplica restricciones de
+ * visibilidad de botones según el rol del usuario en sesión.
+ */
 public class CatalogoController {
 
     @FXML private TextField txtBuscar;
@@ -48,6 +56,11 @@ public class CatalogoController {
     private final MaterialDAO materialDAO = new MaterialDAO();
     private final ObservableList<Material> listaCompleta = FXCollections.observableArrayList();
 
+    /**
+     * Inicializa la tabla, los listeners de búsqueda/filtros, aplica las
+     * restricciones de rol y carga los datos iniciales del catálogo.
+     * Se invoca automáticamente al cargar el FXML.
+     */
     @FXML
     public void initialize() {
         colId.setCellValueFactory(new PropertyValueFactory<>("idMaterial"));
@@ -84,6 +97,10 @@ public class CatalogoController {
         cargarDatos();
     }
 
+    /**
+     * Oculta los botones de administración (agregar, actualizar, eliminar,
+     * reabastecer) cuando el usuario en sesión tiene rol "Usuario".
+     */
     private void aplicarRestriccionesPorRol() {
         if (Sesion.isUsuario()) {
             btnAgregarMaterial.setVisible(false);
@@ -97,10 +114,19 @@ public class CatalogoController {
         }
     }
 
+    /**
+     * Establece el nombre de usuario mostrado en la etiqueta superior.
+     *
+     * @param nombreUsuario nombre del usuario a mostrar
+     */
     public void setUsuario(String nombreUsuario) {
         lblUsuario.setText("👤 " + nombreUsuario);
     }
 
+    /**
+     * Carga desde la base de datos todos los materiales registrados,
+     * llena el combo de categorías disponibles y aplica los filtros actuales.
+     */
     private void cargarDatos() {
         try {
             listaCompleta.setAll(materialDAO.listarTodos());
@@ -118,6 +144,10 @@ public class CatalogoController {
         }
     }
 
+    /**
+     * Filtra la lista completa de materiales según el texto de búsqueda,
+     * la categoría y el estado seleccionados, y actualiza la tabla.
+     */
     private void aplicarFiltros() {
         String texto = txtBuscar.getText() == null ? "" : txtBuscar.getText().trim().toLowerCase();
         String categoria = cmbFiltroCategoria.getValue();
@@ -133,6 +163,10 @@ public class CatalogoController {
         actualizarResumen();
     }
 
+    /**
+     * Recalcula y muestra los contadores del panel de resumen
+     * (total, disponibles, prestados, stock bajo y última actualización).
+     */
     private void actualizarResumen() {
         int total = listaCompleta.size();
         long disponibles = listaCompleta.stream().filter(m -> "Disponible".equals(m.getEstado())).count();
@@ -149,6 +183,11 @@ public class CatalogoController {
                 + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
     }
 
+    /**
+     * Abre la pantalla para registrar un nuevo material en el catálogo.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void handleAgregarMaterial() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("from_AgregarProducto.fxml"));
@@ -160,6 +199,12 @@ public class CatalogoController {
         stage.show();
     }
 
+    /**
+     * Abre la pantalla de edición precargada con el material seleccionado
+     * en la tabla. Muestra un error si no hay ningún material seleccionado.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void handleActualizar() throws IOException {
         Material seleccionado = tablaMateriales.getSelectionModel().getSelectedItem();
@@ -180,6 +225,12 @@ public class CatalogoController {
         stage.show();
     }
 
+    /**
+     * Abre la pantalla de baja de insumo para el material seleccionado
+     * en la tabla. Muestra un error si no hay ningún material seleccionado.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void handleEliminarMaterial() throws IOException {
         Material seleccionado = tablaMateriales.getSelectionModel().getSelectedItem();
@@ -200,6 +251,12 @@ public class CatalogoController {
         stage.show();
     }
 
+    /**
+     * Abre la pantalla de reabastecimiento para el material seleccionado
+     * en la tabla. Muestra un error si no hay ningún material seleccionado.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void handleReabastecer() throws IOException {
         Material seleccionado = tablaMateriales.getSelectionModel().getSelectedItem();
@@ -220,6 +277,9 @@ public class CatalogoController {
         stage.show();
     }
 
+    /**
+     * Limpia el texto de búsqueda y las selecciones de los combos de filtro.
+     */
     @FXML
     private void handleLimpiarFiltros() {
         txtBuscar.clear();
@@ -227,6 +287,11 @@ public class CatalogoController {
         cmbFiltroEstado.getSelectionModel().clearSelection();
     }
 
+    /**
+     * Regresa a la pantalla del panel principal.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void accionVolver() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Principal.fxml"));
@@ -238,6 +303,11 @@ public class CatalogoController {
         stage.show();
     }
 
+    /**
+     * Muestra una alerta de advertencia con el mensaje indicado.
+     *
+     * @param mensaje texto a mostrar en la alerta
+     */
     private void mostrarError(String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.WARNING, mensaje, ButtonType.OK);
         alerta.setHeaderText(null);

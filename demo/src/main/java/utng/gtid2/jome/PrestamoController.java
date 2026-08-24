@@ -28,6 +28,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+/**
+ * Controlador de la pantalla de registro de Préstamo (asignación de un
+ * insumo a un técnico/usuario).
+ * <p>
+ * Carga los insumos disponibles y los usuarios registrados, valida los
+ * datos ingresados y registra el préstamo en la base de datos.
+ */
 public class PrestamoController implements Initializable {
 
     @FXML private TextField txtFolio;
@@ -49,6 +56,15 @@ public class PrestamoController implements Initializable {
     private final Map<String, Material> materialesPorNombre = new HashMap<>();
     private final Map<String, Usuario> usuariosPorNombre = new HashMap<>();
 
+    /**
+     * Inicializa el formulario: limpia el mensaje de error, carga los
+     * insumos disponibles y los responsables, genera el folio siguiente
+     * y agrega el listener que actualiza la disponibilidad del insumo
+     * seleccionado.
+     *
+     * @param url ubicación usada para resolver rutas relativas del FXML (no usado)
+     * @param rb  recursos de internacionalización del FXML (no usado)
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         lblError.setText("");
@@ -61,6 +77,10 @@ public class PrestamoController implements Initializable {
         cmbInsumo.valueProperty().addListener((obs, viejo, nuevo) -> actualizarDisponibleInfo());
     }
 
+    /**
+     * Carga en el combo de insumos aquellos materiales con cantidad
+     * disponible mayor a cero.
+     */
     private void cargarInsumos() {
         try {
             cmbInsumo.getItems().clear();
@@ -76,6 +96,10 @@ public class PrestamoController implements Initializable {
         }
     }
 
+    /**
+     * Actualiza la etiqueta de disponibilidad según el insumo seleccionado
+     * en el combo.
+     */
     private void actualizarDisponibleInfo() {
         String nombreInsumo = cmbInsumo.getValue();
         if (nombreInsumo == null) {
@@ -88,6 +112,11 @@ public class PrestamoController implements Initializable {
         }
     }
 
+    /**
+     * Carga en el combo de responsables todos los usuarios registrados.
+     * Si hay una sesión activa, preselecciona y bloquea el combo con el
+     * usuario en sesión.
+     */
     private void cargarResponsables() {
         try {
             cmbResponsable.getItems().clear();
@@ -110,6 +139,10 @@ public class PrestamoController implements Initializable {
         }
     }
 
+    /**
+     * Obtiene y muestra el siguiente folio disponible para el préstamo.
+     * Si falla la consulta, se usa "F001" como valor por defecto.
+     */
     private void cargarSiguienteFolio() {
         try {
             txtFolio.setText(prestamoDAO.generarSiguienteFolio());
@@ -118,6 +151,12 @@ public class PrestamoController implements Initializable {
         }
     }
 
+    /**
+     * Valida los datos del formulario y registra el préstamo en la base
+     * de datos. Si la fecha de devolución no se especifica, se calcula
+     * automáticamente como 7 días después de la fecha de préstamo.
+     * Muestra un mensaje de error en {@code lblError} si la validación falla.
+     */
     @FXML
     private void mostrarInformacion() {
         String folio = txtFolio.getText();
@@ -196,6 +235,10 @@ public class PrestamoController implements Initializable {
         }
     }
 
+    /**
+     * Limpia todos los campos del formulario, dejándolo listo para un
+     * nuevo registro.
+     */
     @FXML
     private void accionCancelar() {
         cmbInsumo.getSelectionModel().clearSelection();
@@ -207,6 +250,11 @@ public class PrestamoController implements Initializable {
         lblError.setText("");
     }
 
+    /**
+     * Regresa a la pantalla del panel principal.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void accionVolver() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Principal.fxml"));
@@ -218,6 +266,11 @@ public class PrestamoController implements Initializable {
         stage.show();
     }
 
+    /**
+     * Abre la pantalla con el historial de préstamos.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void accionVerHistorial() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("from_ListaAsignaciones.fxml"));

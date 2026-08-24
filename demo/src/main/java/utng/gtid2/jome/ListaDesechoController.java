@@ -17,6 +17,13 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador de la pantalla de historial de Desecho.
+ * <p>
+ * Muestra los registros de baja de insumos por desecho, permite buscar
+ * por folio/insumo/motivo, y da acceso a las acciones de agregar,
+ * editar y eliminar registros.
+ */
 public class ListaDesechoController {
 
     @FXML private Button btnResultado;
@@ -40,6 +47,11 @@ public class ListaDesechoController {
     private final DesechoDAO desechoDAO = new DesechoDAO();
     private final ObservableList<Desecho> listaCompleta = FXCollections.observableArrayList();
 
+    /**
+     * Inicializa las columnas de la tabla, el listener de búsqueda y
+     * carga los datos iniciales del historial de desecho.
+     * Se invoca automáticamente al cargar el FXML.
+     */
     @FXML
     public void initialize() {
         colFolio.setCellValueFactory(new PropertyValueFactory<>("folio"));
@@ -69,6 +81,10 @@ public class ListaDesechoController {
         cargarDatos();
     }
 
+    /**
+     * Carga desde la base de datos todos los registros de desecho
+     * y aplica el filtro de búsqueda actual.
+     */
     private void cargarDatos() {
         try {
             listaCompleta.setAll(desechoDAO.listarTodos());
@@ -78,6 +94,10 @@ public class ListaDesechoController {
         }
     }
 
+    /**
+     * Filtra la lista completa de registros según el texto de búsqueda
+     * (folio, insumo o motivo) y actualiza la tabla y el resumen.
+     */
     private void aplicarFiltro() {
         String texto = txtBuscar.getText() == null ? "" : txtBuscar.getText().trim().toLowerCase();
 
@@ -92,6 +112,10 @@ public class ListaDesechoController {
         actualizarResumen();
     }
 
+    /**
+     * Recalcula y muestra el total de registros y el peso acumulado
+     * de desecho.
+     */
     private void actualizarResumen() {
         int total = listaCompleta.size();
         double pesoTotal = listaCompleta.stream().mapToDouble(Desecho::getPeso).sum();
@@ -100,6 +124,11 @@ public class ListaDesechoController {
         lblPesoTotal.setText(String.format("Desecho acumulado: %.2f kg", pesoTotal));
     }
 
+    /**
+     * Abre la pantalla para registrar un nuevo desecho.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void accionAgregar() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("from_RegistroDesecho.fxml"));
@@ -111,6 +140,12 @@ public class ListaDesechoController {
         stage.show();
     }
 
+    /**
+     * Abre la pantalla de edición precargada con el registro de desecho
+     * seleccionado en la tabla. Muestra un error si no hay ninguno seleccionado.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void accionEditar() throws IOException {
         Desecho seleccionado = tablaDesecho.getSelectionModel().getSelectedItem();
@@ -131,6 +166,10 @@ public class ListaDesechoController {
         stage.show();
     }
 
+    /**
+     * Solicita confirmación y, si se acepta, elimina el registro de desecho
+     * seleccionado (reponiendo el stock del insumo en el catálogo).
+     */
     @FXML
     private void accionEliminar() {
         Desecho seleccionado = tablaDesecho.getSelectionModel().getSelectedItem();
@@ -156,6 +195,11 @@ public class ListaDesechoController {
         });
     }
 
+    /**
+     * Regresa a la pantalla del panel principal.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void accionVolver() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Principal.fxml"));
@@ -167,6 +211,11 @@ public class ListaDesechoController {
         stage.show();
     }
 
+    /**
+     * Muestra una alerta de advertencia con el mensaje indicado.
+     *
+     * @param mensaje texto a mostrar en la alerta
+     */
     private void mostrarError(String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.WARNING, mensaje, ButtonType.OK);
         alerta.setHeaderText(null);

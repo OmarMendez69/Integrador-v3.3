@@ -29,6 +29,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+/**
+ * Controlador del formulario para registrar o editar una baja parcial
+ * de material (desecho). Carga los insumos con stock disponible y los
+ * usuarios registrados para llenar los combos, y en modo edición
+ * restringe los campos que ya afectaron el inventario (insumo,
+ * cantidad, peso, responsable) para que solo se puedan corregir el
+ * motivo, la fecha y la descripción.
+ */
 public class RegistroDesechoController implements Initializable {
 
     @FXML private TextField txtFolio;
@@ -55,6 +63,13 @@ public class RegistroDesechoController implements Initializable {
     private boolean modoEdicion = false;
     private int idDesecho;
 
+    /**
+     * Llena los combos de insumo y responsable, y genera el folio del
+     * siguiente registro de desecho.
+     *
+     * @param url ubicación usada para resolver rutas relativas del FXML (no utilizado)
+     * @param rb  recursos de internacionalización del FXML (no utilizado)
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         lblError.setText("");
@@ -63,6 +78,7 @@ public class RegistroDesechoController implements Initializable {
         cargarSiguienteFolio();
     }
 
+    /** Llena el combo de insumos solo con los materiales que tienen stock disponible. */
     private void cargarInsumos() {
         try {
             cmbInsumo.getItems().clear();
@@ -78,6 +94,11 @@ public class RegistroDesechoController implements Initializable {
         }
     }
 
+    /**
+     * Llena el combo de responsables con los usuarios registrados y, si
+     * hay una sesión activa, preselecciona y bloquea el responsable con
+     * el usuario que inició sesión.
+     */
     private void cargarResponsables() {
         try {
             cmbResponsable.getItems().clear();
@@ -100,6 +121,7 @@ public class RegistroDesechoController implements Initializable {
         }
     }
 
+    /** Genera y muestra el folio autogenerado para el siguiente desecho. */
     private void cargarSiguienteFolio() {
         try {
             txtFolio.setText(desechoDAO.generarSiguienteFolio());
@@ -108,6 +130,14 @@ public class RegistroDesechoController implements Initializable {
         }
     }
 
+    /**
+     * Precarga el formulario con los datos de un desecho existente y
+     * bloquea los campos que ya afectaron el inventario (insumo,
+     * cantidad, peso y responsable), dejando editables solo motivo,
+     * fecha y descripción.
+     *
+     * @param desecho registro de desecho a editar
+     */
     public void cargarDesecho(Desecho desecho) {
         modoEdicion = true;
         idDesecho = desecho.getIdDesecho();
@@ -138,6 +168,12 @@ public class RegistroDesechoController implements Initializable {
         btnGuardar.setText("Actualizar");
     }
 
+    /**
+     * Valida los campos del formulario y guarda el desecho: si está en
+     * modo edición solo actualiza motivo, fecha y descripción; si es un
+     * registro nuevo, lo inserta y descuenta el stock del material
+     * afectado mediante {@link DesechoDAO#registrar(Desecho)}.
+     */
     @FXML
     private void mostrarInformacion() {
         String nombreInsumo = cmbInsumo.getValue();
@@ -202,6 +238,7 @@ public class RegistroDesechoController implements Initializable {
         }
     }
 
+    /** Limpia los campos editables del formulario. */
     @FXML
     private void accionCancelar() {
         cmbInsumo.getSelectionModel().clearSelection();
@@ -213,6 +250,11 @@ public class RegistroDesechoController implements Initializable {
         lblError.setText("");
     }
 
+    /**
+     * Regresa al historial de desechos, reemplazando la escena actual.
+     *
+     * @throws IOException si no se puede cargar el archivo FXML del historial
+     */
     @FXML
     private void accionVolver() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("from_ListaDesecho.fxml"));

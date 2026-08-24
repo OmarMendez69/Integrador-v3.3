@@ -17,6 +17,12 @@ import utng.gtid2.modelo.Material;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * Controlador del formulario para dar de alta o editar un material del
+ * catálogo. Calcula automáticamente el estado del stock (Disponible o
+ * Crítico) y, en modo edición, recalcula la cantidad disponible
+ * respetando lo que ya está prestado.
+ */
 public class AgregarProductoController {
 
     @FXML private TextField txtCodigo;
@@ -34,6 +40,12 @@ public class AgregarProductoController {
     private boolean modoEdicion = false;
     private Material materialEnEdicion;
 
+    /**
+     * Precarga el formulario con los datos de un material existente y
+     * cambia el formulario a modo edición.
+     *
+     * @param material material a editar
+     */
     public void cargarProducto(Material material) {
         modoEdicion = true;
         materialEnEdicion = material;
@@ -51,6 +63,12 @@ public class AgregarProductoController {
         btnGuardar.setText("Actualizar");
     }
 
+    /**
+     * Valida los campos del formulario y guarda el material, ya sea
+     * insertando uno nuevo o actualizando el material en edición. El
+     * estado del stock se recalcula automáticamente según la cantidad
+     * disponible resultante.
+     */
     @FXML
     private void guardarMaterial() {
         String nombre = txtNombre.getText().trim();
@@ -104,12 +122,18 @@ public class AgregarProductoController {
         }
     }
 
+    /**
+     * Muestra una alerta de advertencia con el mensaje indicado.
+     *
+     * @param mensaje texto a mostrar en la alerta
+     */
     private void mostrarAlerta(String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.WARNING, mensaje, ButtonType.OK);
         alerta.setHeaderText(null);
         alerta.showAndWait();
     }
 
+    /** Limpia los campos editables del formulario. */
     @FXML
     private void accionCancelar() {
         txtNombre.clear();
@@ -119,6 +143,11 @@ public class AgregarProductoController {
         txtCostoUnitario.clear();
     }
 
+    /**
+     * Regresa al catálogo de insumos, reemplazando la escena actual.
+     *
+     * @throws IOException si no se puede cargar el archivo FXML del catálogo
+     */
     @FXML
     private void accionVolver() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("from_Catalogo.fxml"));

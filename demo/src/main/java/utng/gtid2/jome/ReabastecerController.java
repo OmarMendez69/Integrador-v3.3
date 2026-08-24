@@ -19,6 +19,13 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
+/**
+ * Controlador de la pantalla de Reabastecimiento de materiales.
+ * <p>
+ * Recibe el material a reabastecer, permite indicar la cantidad a
+ * añadir y la fecha de entrada, muestra una vista previa del nuevo
+ * stock y registra el reabastecimiento en la base de datos.
+ */
 public class ReabastecerController {
 
     @FXML private Label lblNombreMaterial;
@@ -37,6 +44,13 @@ public class ReabastecerController {
     private final MaterialDAO materialDAO = new MaterialDAO();
     private Material materialSeleccionado;
 
+    /**
+     * Recibe el material seleccionado desde la pantalla de Catálogo,
+     * muestra sus datos actuales, preselecciona la fecha de entrada
+     * con la fecha actual y activa la vista previa del nuevo stock.
+     *
+     * @param material material que se va a reabastecer
+     */
     public void cargarMaterial(Material material) {
         this.materialSeleccionado = material;
 
@@ -53,6 +67,10 @@ public class ReabastecerController {
         actualizarPreview();
     }
 
+    /**
+     * Calcula y muestra en {@code lblPreview} el nuevo stock disponible
+     * y total que resultaría de aplicar la cantidad ingresada.
+     */
     private void actualizarPreview() {
         if (materialSeleccionado == null) return;
 
@@ -76,6 +94,11 @@ public class ReabastecerController {
         }
     }
 
+    /**
+     * Valida los datos del formulario y aplica el reabastecimiento del
+     * material seleccionado en la base de datos. Muestra un mensaje de
+     * error en {@code lblError} si la validación falla.
+     */
     @FXML
     private void guardarReabastecimiento() {
         lblError.setText("");
@@ -128,6 +151,9 @@ public class ReabastecerController {
         }
     }
 
+    /**
+     * Cancela la operación de reabastecimiento y regresa al catálogo.
+     */
     @FXML
     private void accionCancelar() {
         try {
@@ -137,6 +163,11 @@ public class ReabastecerController {
         }
     }
 
+    /**
+     * Regresa a la pantalla del catálogo de materiales.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     private void accionVolver() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("from_Catalogo.fxml"));
         Parent root = loader.load();

@@ -34,6 +34,36 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * Controlador de la pantalla de Reportes del sistema de inventario.
+ * <p>
+ * Esta pantalla cumple dos funciones principales:
+ * <ol>
+ *   <li><b>Vista previa en la interfaz:</b> al inicializarse, consulta los
+ *       datos actuales (resumen general, catálogo, préstamos, desecho y
+ *       usuarios) y los muestra en tablas construidas dinámicamente dentro
+ *       de los contenedores {@link VBox} definidos en el FXML.</li>
+ *   <li><b>Exportación a PDF:</b> por cada sección existe un método
+ *       {@code descargarXxx()} que genera un archivo PDF independiente
+ *       usando la librería iText, y un método adicional
+ *       ({@link #descargarReporte()}) que genera un único PDF con todas
+ *       las secciones combinadas ("Reporte General").</li>
+ * </ol>
+ * <p>
+ * Para evitar duplicar código entre los reportes en pantalla y los PDF,
+ * la clase se apoya en un conjunto de métodos auxiliares privados:
+ * <ul>
+ *   <li>{@link #headerFila(String[], double[])} y
+ *       {@link #dataFila(String[], double[], int, String)} construyen las
+ *       filas de las tablas mostradas en la interfaz (JavaFX).</li>
+ *   <li>{@link #encabezado(Document, String)}, {@link #titulo(Document, String)},
+ *       {@link #hCell(PdfPTable, String)} y {@link #dCell(PdfPTable, String, boolean)}
+ *       construyen los elementos visuales de los documentos PDF (iText).</li>
+ *   <li>{@link #pedirRuta(String)} abre el diálogo para elegir dónde
+ *       guardar el PDF, y {@link #ok(String)} / {@link #err(Exception)}
+ *       muestran el resultado de la operación al usuario.</li>
+ * </ul>
+ */
 public class ReportesController {
 
     @FXML private Button btnVolver;
@@ -65,11 +95,28 @@ public class ReportesController {
     private static final BaseColor C_MORADO      = new BaseColor(183, 33, 255);
     private static final BaseColor C_GRIS        = new BaseColor(156, 163, 175);
 
+    /**
+     * Punto de entrada de JavaFX: se invoca automáticamente al cargar el
+     * FXML y dispara la carga de todos los datos necesarios para la
+     * vista previa de los reportes.
+     */
     @FXML
     public void initialize() {
         cargarDatos();
     }
 
+    /**
+     * Consulta en la base de datos los indicadores del dashboard
+     * (total de materiales, críticos, técnicos activos y peso de
+     * desecho del mes) y las listas completas de materiales, préstamos,
+     * desechos y usuarios. Con esos datos, puebla las cinco secciones
+     * de la vista previa ({@link #poblarResumen()},
+     * {@link #poblarCatalogo()}, {@link #poblarAsignaciones()},
+     * {@link #poblarDesecho()} y {@link #poblarUsuarios()}).
+     * <p>
+     * Si ocurre un error de base de datos, se registra en consola con
+     * {@code printStackTrace()} y las secciones quedan vacías.
+     */
     private void cargarDatos() {
         try {
             totalMateriales = dashboardDAO.contarMateriales();
@@ -94,6 +141,11 @@ public class ReportesController {
 
     // ── Poblar FXML ───────────────────────────────────────────────────────────
 
+    /**
+     * Llena {@code vboxResumen} con las filas clave-valor del resumen
+     * general (insumos registrados, críticos, técnicos activos y
+     * desecho del mes).
+     */
     private void poblarResumen() {
         vboxResumen.getChildren().clear();
         agregarFilaResumen("Insumos registrados:",       String.valueOf(totalMateriales), false);
@@ -102,6 +154,15 @@ public class ReportesController {
         agregarFilaResumen("Desecho del mes:",           String.format("%.1f kg", pesoMes), false);
     }
 
+    /**
+     * Construye y agrega a {@code vboxResumen} una fila con una etiqueta
+     * de clave a la izquierda y su valor a la derecha.
+     *
+     * @param clave texto descriptivo del indicador
+     * @param valor valor del indicador ya formateado como texto
+     * @param rojo  si es {@code true}, resalta el valor en color rojo
+     *              (usado para indicadores de alerta como "críticos")
+     */
     private void agregarFilaResumen(String clave, String valor, boolean rojo) {
         HBox fila = new HBox();
         Label lClave = new Label(clave);
@@ -115,6 +176,11 @@ public class ReportesController {
         vboxResumen.getChildren().add(fila);
     }
 
+    /**
+     * Llena {@code vboxCatalogo} con el encabezado de columnas y una fila
+     * por cada material registrado, resaltando en rojo los que están en
+     * estado "Crítico".
+     */
     private void poblarCatalogo() {
         vboxCatalogo.getChildren().clear();
         vboxCatalogo.getChildren().add(headerFila(
@@ -130,6 +196,11 @@ public class ReportesController {
         }
     }
 
+    /**
+     * Llena {@code vboxAsignaciones} con el encabezado de columnas y una
+     * fila por cada préstamo registrado, resaltando en rojo los que
+     * están en estado "Vencido".
+     */
     private void poblarAsignaciones() {
         vboxAsignaciones.getChildren().clear();
         vboxAsignaciones.getChildren().add(headerFila(
@@ -146,6 +217,10 @@ public class ReportesController {
         }
     }
 
+    /**
+     * Llena {@code vboxDesecho} con el encabezado de columnas y una fila
+     * por cada registro de desecho existente.
+     */
     private void poblarDesecho() {
         vboxDesecho.getChildren().clear();
         vboxDesecho.getChildren().add(headerFila(
@@ -160,6 +235,10 @@ public class ReportesController {
         }
     }
 
+    /**
+     * Llena {@code vboxUsuarios} con el encabezado de columnas y una fila
+     * por cada usuario registrado en el sistema.
+     */
     private void poblarUsuarios() {
         vboxUsuarios.getChildren().clear();
         vboxUsuarios.getChildren().add(headerFila(
@@ -173,6 +252,15 @@ public class ReportesController {
         }
     }
 
+    /**
+     * Construye la fila de encabezado (nombres de columna) para una de
+     * las tablas mostradas en la vista previa de un reporte.
+     *
+     * @param cols   textos de cada columna, en orden
+     * @param anchos ancho preferido (en píxeles) de cada columna, en el
+     *               mismo orden que {@code cols}
+     * @return el {@link HBox} con las etiquetas de encabezado ya estilizadas
+     */
     private HBox headerFila(String[] cols, double[] anchos) {
         HBox row = new HBox();
         row.setStyle("-fx-background-color: #F3F4F6; -fx-padding: 6 16 6 16;");
@@ -185,6 +273,20 @@ public class ReportesController {
         return row;
     }
 
+    /**
+     * Construye una fila de datos para una de las tablas mostradas en la
+     * vista previa de un reporte, alternando el color de fondo según el
+     * índice de la fila (efecto "zebra").
+     *
+     * @param vals   valores de cada celda, en el mismo orden que las columnas
+     * @param anchos ancho preferido (en píxeles) de cada columna
+     * @param idx    índice de la fila dentro de la lista, usado para alternar
+     *               el color de fondo
+     * @param color  color (en formato CSS hexadecimal) con el que se
+     *               pintará el texto de la fila, por ejemplo para resaltar
+     *               registros críticos o vencidos
+     * @return el {@link HBox} con las etiquetas de datos ya estilizadas
+     */
     private HBox dataFila(String[] vals, double[] anchos, int idx, String color) {
         HBox row = new HBox();
         String bg = idx % 2 != 0 ? "-fx-background-color: #F9FAFB; " : "";
@@ -200,6 +302,15 @@ public class ReportesController {
 
     // ── Descargas PDF ─────────────────────────────────────────────────────────
 
+    /**
+     * Genera y guarda un PDF con el resumen general del sistema
+     * (insumos registrados, críticos, técnicos activos y desecho del mes).
+     * <p>
+     * Solicita al usuario la ruta de destino mediante un {@link FileChooser};
+     * si el usuario cancela el diálogo, el método termina sin hacer nada.
+     * Al finalizar, muestra una alerta de éxito o de error según el
+     * resultado de la operación.
+     */
     @FXML
     private void descargarResumen() {
         File f = pedirRuta("Resumen_General");
@@ -226,6 +337,16 @@ public class ReportesController {
         }
     }
 
+    /**
+     * Genera y guarda un PDF (en orientación horizontal) con el catálogo
+     * completo de insumos, resaltando en rojo los materiales en estado
+     * "Crítico".
+     * <p>
+     * Solicita al usuario la ruta de destino mediante un {@link FileChooser};
+     * si el usuario cancela el diálogo, el método termina sin hacer nada.
+     * Al finalizar, muestra una alerta de éxito o de error según el
+     * resultado de la operación.
+     */
     @FXML
     private void descargarCatalogo() {
         File f = pedirRuta("Catalogo_Insumos");
@@ -256,6 +377,16 @@ public class ReportesController {
         }
     }
 
+    /**
+     * Genera y guarda un PDF (en orientación horizontal) con el historial
+     * completo de préstamos, resaltando en rojo los que están en estado
+     * "Vencido".
+     * <p>
+     * Solicita al usuario la ruta de destino mediante un {@link FileChooser};
+     * si el usuario cancela el diálogo, el método termina sin hacer nada.
+     * Al finalizar, muestra una alerta de éxito o de error según el
+     * resultado de la operación.
+     */
     @FXML
     private void descargarAsignaciones() {
         File f = pedirRuta("Historial_Prestamos");
@@ -287,6 +418,15 @@ public class ReportesController {
         }
     }
 
+    /**
+     * Genera y guarda un PDF (en orientación horizontal) con el registro
+     * completo de desecho de insumos.
+     * <p>
+     * Solicita al usuario la ruta de destino mediante un {@link FileChooser};
+     * si el usuario cancela el diálogo, el método termina sin hacer nada.
+     * Al finalizar, muestra una alerta de éxito o de error según el
+     * resultado de la operación.
+     */
     @FXML
     private void descargarDesecho() {
         File f = pedirRuta("Registro_Desecho");
@@ -317,6 +457,15 @@ public class ReportesController {
         }
     }
 
+    /**
+     * Genera y guarda un PDF con la lista completa de usuarios
+     * registrados en el sistema.
+     * <p>
+     * Solicita al usuario la ruta de destino mediante un {@link FileChooser};
+     * si el usuario cancela el diálogo, el método termina sin hacer nada.
+     * Al finalizar, muestra una alerta de éxito o de error según el
+     * resultado de la operación.
+     */
     @FXML
     private void descargarUsuarios() {
         File f = pedirRuta("Usuarios_Registrados");
@@ -345,6 +494,18 @@ public class ReportesController {
         }
     }
 
+    /**
+     * Genera y guarda un único PDF (en orientación horizontal) que combina,
+     * en secciones sucesivas, el resumen general, el catálogo de insumos,
+     * el historial de préstamos, el registro de desecho y la lista de
+     * usuarios. Es la versión "todo en uno" de los cinco métodos
+     * {@code descargarXxx()} individuales.
+     * <p>
+     * Solicita al usuario la ruta de destino mediante un {@link FileChooser};
+     * si el usuario cancela el diálogo, el método termina sin hacer nada.
+     * Al finalizar, muestra una alerta de éxito o de error según el
+     * resultado de la operación.
+     */
     @FXML
     private void descargarReporte() {
         File f = pedirRuta("Reporte_General_CGTI");
@@ -435,6 +596,17 @@ public class ReportesController {
 
     // ── Helpers PDF ───────────────────────────────────────────────────────────
 
+    /**
+     * Abre un diálogo {@link FileChooser} para que el usuario elija dónde
+     * guardar el PDF, sugiriendo como nombre inicial el prefijo indicado
+     * seguido de la fecha y hora actuales (formato {@code yyyyMMdd_HHmm})
+     * y la extensión {@code .pdf}.
+     *
+     * @param nombre prefijo descriptivo del reporte (por ejemplo,
+     *               "Catalogo_Insumos")
+     * @return el {@link File} elegido por el usuario, o {@code null} si
+     *         canceló el diálogo
+     */
     private File pedirRuta(String nombre) {
         FileChooser fc = new FileChooser();
         fc.setTitle("Guardar reporte");
@@ -444,6 +616,18 @@ public class ReportesController {
         return fc.showSaveDialog(btnVolver.getScene().getWindow());
     }
 
+    /**
+     * Agrega al documento PDF el encabezado institucional: el logo de la
+     * UTNG (si se puede cargar), el título del reporte y la fecha/hora
+     * de generación.
+     * <p>
+     * Si el logo no puede cargarse por cualquier motivo, el encabezado
+     * se genera igualmente, simplemente sin la imagen.
+     *
+     * @param doc   documento PDF (ya abierto) al que se agrega el encabezado
+     * @param texto título específico del reporte (se antepone "CGTI  |  ")
+     * @throws DocumentException si iText no puede agregar los elementos al documento
+     */
     private void encabezado(Document doc, String texto) throws DocumentException {
         // Logo institucional
         try {
@@ -472,6 +656,14 @@ public class ReportesController {
         doc.add(Chunk.NEWLINE);
     }
 
+    /**
+     * Agrega al documento PDF un subtítulo de sección (usado en el
+     * "Reporte General" para separar cada bloque de datos).
+     *
+     * @param doc   documento PDF (ya abierto) al que se agrega el subtítulo
+     * @param texto texto del subtítulo de la sección
+     * @throws DocumentException si iText no puede agregar el párrafo al documento
+     */
     private void titulo(Document doc, String texto) throws DocumentException {
         Font f = new Font(Font.FontFamily.HELVETICA, 13, Font.BOLD, new BaseColor(31, 41, 55));
         Paragraph p = new Paragraph(texto, f);
@@ -480,6 +672,13 @@ public class ReportesController {
         doc.add(p);
     }
 
+    /**
+     * Agrega a la tabla PDF una celda de encabezado de columna, con fondo
+     * gris claro y texto en negrita.
+     *
+     * @param tabla tabla PDF a la que se agrega la celda
+     * @param texto nombre de la columna
+     */
     private void hCell(PdfPTable tabla, String texto) {
         Font f = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, C_HEADER_TEXT);
         PdfPCell c = new PdfPCell(new Phrase(texto, f));
@@ -488,6 +687,14 @@ public class ReportesController {
         tabla.addCell(c);
     }
 
+    /**
+     * Agrega a la tabla PDF una celda de datos.
+     *
+     * @param tabla tabla PDF a la que se agrega la celda
+     * @param texto valor a mostrar en la celda (se muestra vacío si es {@code null})
+     * @param rojo  si es {@code true}, pinta el texto en rojo (usado para
+     *              resaltar registros críticos o vencidos)
+     */
     private void dCell(PdfPTable tabla, String texto, boolean rojo) {
         Font f = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL, rojo ? C_ROJO : C_TEXT);
         PdfPCell c = new PdfPCell(new Phrase(texto != null ? texto : "", f));
@@ -495,12 +702,24 @@ public class ReportesController {
         tabla.addCell(c);
     }
 
+    /**
+     * Muestra una alerta informativa confirmando que la operación de
+     * exportación se completó correctamente.
+     *
+     * @param msg mensaje a mostrar en la alerta
+     */
     private void ok(String msg) {
         Alert a = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
         a.setHeaderText(null);
         a.showAndWait();
     }
 
+    /**
+     * Muestra una alerta de error indicando que no se pudo generar el
+     * PDF, incluyendo el mensaje de la excepción original.
+     *
+     * @param e excepción capturada durante la generación del PDF
+     */
     private void err(Exception e) {
         Alert a = new Alert(Alert.AlertType.ERROR,
                 "No se pudo generar el PDF: " + e.getMessage(), ButtonType.OK);
@@ -508,6 +727,11 @@ public class ReportesController {
         a.showAndWait();
     }
 
+    /**
+     * Regresa a la pantalla del panel principal.
+     *
+     * @throws IOException si ocurre un error al cargar el FXML
+     */
     @FXML
     private void accionVolver() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Principal.fxml"));

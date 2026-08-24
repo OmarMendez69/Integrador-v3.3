@@ -20,6 +20,11 @@ import utng.gtid2.modelo.Usuario;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * Controlador del formulario para dar de alta o editar un usuario del
+ * sistema. En modo edición no permite modificar el username ni la
+ * contraseña, ya que son datos de acceso originales del registro.
+ */
 public class AgregarUsuarioController {
 
     @FXML private Label lblTitulo;
@@ -34,11 +39,19 @@ public class AgregarUsuarioController {
     private boolean modoEdicion = false;
     private int idUsuario;
 
+    /** Llena el combo de rol con las opciones disponibles del sistema. */
     @FXML
     public void initialize() {
         cmbRol.setItems(FXCollections.observableArrayList("Admin", "Tecnico", "Usuario"));
     }
 
+    /**
+     * Precarga el formulario con los datos de un usuario existente,
+     * cambia a modo edición y oculta los campos de username y
+     * contraseña, que no son editables.
+     *
+     * @param usuario usuario a editar
+     */
     public void cargarUsuario(Usuario usuario) {
         modoEdicion = true;
         idUsuario = usuario.getIdUsuario();
@@ -58,6 +71,11 @@ public class AgregarUsuarioController {
         txtPassword.setManaged(false);
     }
 
+    /**
+     * Valida los campos requeridos y guarda el usuario: inserta uno
+     * nuevo con contraseña (hasheada en {@link UsuarioDAO}), o
+     * actualiza solo el nombre y rol si está en modo edición.
+     */
     @FXML
     private void guardarUsuario() {
         String nombre = txtNombre.getText().trim();
@@ -85,12 +103,18 @@ public class AgregarUsuarioController {
         }
     }
 
+    /**
+     * Muestra una alerta de advertencia con el mensaje indicado.
+     *
+     * @param mensaje texto a mostrar en la alerta
+     */
     private void mostrarAlerta(String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.WARNING, mensaje, ButtonType.OK);
         alerta.setHeaderText(null);
         alerta.showAndWait();
     }
 
+    /** Limpia todos los campos del formulario. */
     @FXML
     private void accionCancelar() {
         txtNombre.clear();
@@ -99,6 +123,11 @@ public class AgregarUsuarioController {
         cmbRol.setValue(null);
     }
 
+    /**
+     * Regresa a la lista de usuarios, reemplazando la escena actual.
+     *
+     * @throws IOException si no se puede cargar el archivo FXML de la lista
+     */
     @FXML
     private void accionVolver() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("from_ListaUsuarios.fxml"));

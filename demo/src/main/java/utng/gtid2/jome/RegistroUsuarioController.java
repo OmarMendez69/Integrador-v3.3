@@ -15,6 +15,12 @@ import utng.gtid2.modelo.Usuario;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * Controlador de la pantalla pública de autorregistro. A diferencia de
+ * {@code AgregarUsuarioController} (usado por un Admin), este
+ * formulario siempre crea usuarios con rol "Usuario" por defecto y
+ * valida que el username no esté repetido antes de insertarlo.
+ */
 public class RegistroUsuarioController {
 
     @FXML
@@ -35,6 +41,11 @@ public class RegistroUsuarioController {
     @FXML
     private Label lblRegistro;
 
+    /**
+     * Valida los campos del formulario, verifica que el username no
+     * exista y registra al nuevo usuario con rol "Usuario". Muestra un
+     * mensaje de éxito o error en pantalla según el resultado.
+     */
     @FXML
     private void mostrarInformacion() {
         String nombre = txtNombre.getText().trim();
@@ -84,6 +95,7 @@ public class RegistroUsuarioController {
         }
     }
 
+    /** Regresa a la pantalla de login. */
     @FXML
     private void accionVolverLogin() {
         try {
