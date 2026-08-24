@@ -8,11 +8,11 @@
 
 ## 🗺️ Índice
 
-- [🧩 Núcleo de la aplicación](#núcleo-de-la-aplicación)
-- [🔐 Autenticación](#autenticación)
-- [📊 Panel principal / Dashboard](#panel-principal--dashboard)
-- [📦 Catálogo de insumos](#catálogo-de-insumos)
-- [🔁 Préstamos / Asignaciones](#préstamos--asignaciones)
+- [🧩 Núcleo de la aplicación](#nucleo-de-la-aplicacion)
+- [🔐 Autenticación](#autenticacion)
+- [📊 Panel principal / Dashboard](#panel-principal-dashboard)
+- [📦 Catálogo de insumos](#catalogo-de-insumos)
+- [🔁 Préstamos / Asignaciones](#prestamos-asignaciones)
 - [🗑️ Desechos](#desechos)
 - [👤 Usuarios](#usuarios)
 - [🏭 Proveedores](#proveedores)
@@ -42,6 +42,8 @@
 > 🧹 **Nota de limpieza:** esta versión ya no incluye `SecondaryController`, `ReporteDetalleController`, `AsignacionesController` ni sus FXML (`primary.fxml`, `secondary.fxml`, `ReporteDetalle.fxml`, `from_Asignaciones.fxml`) — eran restos de versiones anteriores sin ninguna pantalla que los cargara, y se eliminaron del proyecto.
 
 ---
+
+<a id="nucleo-de-la-aplicacion"></a>
 
 ## 🧩 Núcleo de la aplicación
 
@@ -269,6 +271,8 @@ public class ConexionBD {
 </details>
 
 ---
+
+<a id="autenticacion"></a>
 
 ## 🔐 Autenticación
 
@@ -525,6 +529,8 @@ public class RegistroUsuarioController {
 </details>
 
 ---
+
+<a id="panel-principal-dashboard"></a>
 
 ## 📊 Panel principal / Dashboard
 
@@ -1009,6 +1015,8 @@ public class DashboardDAO {
 </details>
 
 ---
+
+<a id="catalogo-de-insumos"></a>
 
 ## 📦 Catálogo de insumos
 
@@ -2163,6 +2171,8 @@ public class Material {
 
 ---
 
+<a id="prestamos-asignaciones"></a>
+
 ## 🔁 Préstamos / Asignaciones
 
 Salida de material hacia un técnico y su devolución.
@@ -3092,6 +3102,8 @@ public class Prestamo {
 
 ---
 
+<a id="desechos"></a>
+
 ## 🗑️ Desechos
 
 Registro de materiales dados de baja definitivamente.
@@ -3952,6 +3964,8 @@ public class Desecho {
 
 ---
 
+<a id="usuarios"></a>
+
 ## 👤 Usuarios
 
 Administración de cuentas y roles del sistema (exclusivo de Superusuario).
@@ -4545,6 +4559,8 @@ public class Usuario {
 
 ---
 
+<a id="proveedores"></a>
+
 ## 🏭 Proveedores
 
 CRUD independiente, sin relación con el resto de las tablas del sistema (módulo agregado por requisito de la materia de Programación, para completar 5 CRUDs).
@@ -4958,6 +4974,8 @@ public class Proveedor {
 </details>
 
 ---
+
+<a id="reportes"></a>
 
 ## 📄 Reportes
 
